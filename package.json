@@ -1,0 +1,41 @@
+{
+  "name": "jsonpathql-parser",
+  "description": "Parse jsonpath query language path string",
+  "version": "0.0.1",
+  "author": "shaady@sdawood.com",
+  "scripts": {
+    "test": "mocha -u tdd test && jscs lib && jshint lib"
+  },
+  "dependencies": {
+    "jison": "0.3.10",
+    "lodash": "^3.8.0",
+    "static-eval": "0.2.3"
+  },
+  "devDependencies": {
+    "chai": "^2.3.0",
+    "esprima": "^2.2.0",
+    "jscs": "1.10.0",
+    "jshint": "2.6.0",
+    "mocha": "2.1.0",
+    "traverse": "^0.6.6"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sdawood/jpql-parser"
+  },
+  "keywords": [
+    "jpql-parser",
+    "JSONPath",
+    "jsonPath",
+    "jsonpath",
+    "json-path",
+    "object",
+    "traversal",
+    "json",
+    "path",
+    "data structures",
+    "graphql",
+    "jsong"
+  ],
+  "license": "MIT"
+}
