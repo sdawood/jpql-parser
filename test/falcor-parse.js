@@ -1,11 +1,11 @@
 var util = require('util')
 var assert = require('chai').assert;
 var expect = require('chai').expect;
-var jgp = require('../lib/index');
+var jpql = new require('../lib/index')();
 var traverse = require('traverse');
 
 
-var __parse = jgp.parser.parse;
+var __parse = jpql.parse;
 
 function pathsEqual(leftPath, rightPath) {
     assert.equal(JSON.stringify(leftPath), JSON.stringify(rightPath));

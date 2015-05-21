@@ -1,5 +1,5 @@
 var assert = require('assert');
-var jp = require('../');
+var jp = new require('../')();
 var util = require('util');
 
 suite('jsonpath#parse', function() {

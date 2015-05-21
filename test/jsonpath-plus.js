@@ -1,5 +1,5 @@
 var assert = require('chai').assert;
-var jgp = require('../lib/index');
+var jgp = new require('../lib/index')();
 
 suite('extended-jsonpath#parse', function() {
   test('parse list of identifier names in indexers :: should parse nested subscript expressions with leading INTEGER,STRING_LITERAL,ARRAY_SLICE', function () {

@@ -1,15 +1,15 @@
 var assert = require('chai').assert;
-var jgp = require('../lib/index');
+var jpql = new require('../lib/index')();
 
 suite('graphql#parse-common', function() {
 
 //  test('Feature graphqlite npm example', function () {
-//    var path = jgp.parse("node[123][id,name,birthdate[month,day],friends[1[cursor,edges[node[name]]]]]");
+//    var path = jpql.parse("node[123][id,name,birthdate[month,day],friends[1[cursor,edges[node[name]]]]]");
 //    assert.deepEqual(path, []);
 //  });
 
   test('parse branches of listable subscript expressions with active index', function () {
-    var path = jgp.parse("node[123][friends[[10:11],[110:111]]]");
+    var path = jpql.parse("node[123][friends[[10:11],[110:111]]]");
     assert.deepEqual(path, [
       { "expression": { "type": "identifier", "value": "node" }, "operation": "member", "scope": "child" },
       { "expression": { "type": "numeric_literal", "value": 123 }, "operation": "subscript", "scope": "child" },
@@ -30,7 +30,7 @@ suite('graphql#parse-common', function() {
   });
 
   test('parse branches of listable subscript expressions with index', function () {
-    var path = jgp.parse("node[123][friends[0[10:11],1[110:111]]]");
+    var path = jpql.parse("node[123][friends[0[10:11],1[110:111]]]");
     assert.deepEqual(path, [
       { "expression": { "type": "identifier", "value": "node" }, "operation": "member", "scope": "child" },
       { "expression": { "type": "numeric_literal", "value": 123 }, "operation": "subscript", "scope": "child" },
@@ -51,7 +51,7 @@ suite('graphql#parse-common', function() {
   });
 
   test('parse branches of listable ACTIVE_SLICE subscript expressions', function () {
-    var path = jgp.parse("node[123][friends[[1:10],{@length-20}:{@length-10},100]]");
+    var path = jpql.parse("node[123][friends[[1:10],{@length-20}:{@length-10},100]]");
     assert.deepEqual(path, [
       {
         "expression": {
@@ -130,7 +130,7 @@ suite('graphql#parse-common', function() {
   });
 
   test('parse branches of listable SCRIPT_EXPRESSION subscript expressions', function () {
-    var path = jgp.parse("node[123][friends[[1:10],{@length-20},100]]");
+    var path = jpql.parse("node[123][friends[[1:10],{@length-20},100]]");
     assert.deepEqual(path, [
       {
         "expression": {
@@ -205,7 +205,7 @@ suite('graphql#parse-common', function() {
   });
 
   test('parse branches of listable SCRIPT_EXPRESSION subscript expressions containing $ == root$ref', function () {
-    var path = jgp.parse("rules['rule1','rule2',{@$.prefix + $.rule1}]");
+    var path = jpql.parse("rules['rule1','rule2',{@$.prefix + $.rule1}]");
     assert.deepEqual(path, [
       {
         "expression": {
@@ -246,7 +246,7 @@ suite('graphql#parse-common', function() {
   });
 
   test('parse branch with leading subscript expression', function () {
-    var path = jgp.parse("node[123][friends[[1:10],count]]");
+    var path = jpql.parse("node[123][friends[[1:10],count]]");
     assert.deepEqual(path, [
       {
         "expression": {
@@ -315,7 +315,7 @@ suite('graphql#parse-common', function() {
   });
 
   test('parse branch with leading descendant member expression', function () {
-    var path = jgp.parse("node[123][friends[..*,count]]");
+    var path = jpql.parse("node[123][friends[..*,count]]");
     assert.deepEqual(path, [
       { "expression": { "type": "identifier", "value": "node" }, "operation": "member", "scope": "child" },
       { "expression": { "type": "numeric_literal", "value": 123 }, "operation": "subscript", "scope": "child" },
@@ -333,7 +333,7 @@ suite('graphql#parse-common', function() {
   });
 
   test('parse branch with path member components', function () {
-      var path = jgp.parse("node[123][name,boxshot.url,birthdate.day]");
+      var path = jpql.parse("node[123][name,boxshot.url,birthdate.day]");
       assert.deepEqual(path, [
         {
           "expression": {
@@ -408,7 +408,7 @@ suite('graphql#parse-common', function() {
     });
 
   test('parse consecutive branch out inside subscript', function () {
-    var path = jgp.parse("node[123][friends[cursor[1[name,age]],cursor[2[name,age]]]]");
+    var path = jpql.parse("node[123][friends[cursor[1[name,age]],cursor[2[name,age]]]]");
     assert.deepEqual(path, [
       {
         "expression": {
@@ -542,7 +542,7 @@ suite('graphql#parse-common', function() {
   });
 
   test('parse branch out and in inside subscript', function () {
-    var path = jgp.parse("node[123][friends[1,2,3].name]");
+    var path = jpql.parse("node[123][friends[1,2,3].name]");
     assert.deepEqual(path, [
       { "expression": { "type": "identifier", "value": "node" }, "operation": "member", "scope": "child" },
       { "expression": { "type": "numeric_literal", "value": 123 }, "operation": "subscript", "scope": "child" },
@@ -559,7 +559,7 @@ suite('graphql#parse-common', function() {
   });
 
   test('parse branch with multiple path compnents', function () {
-    var path = jgp.parse("node[123][friends..*.info[latest]..name]");
+    var path = jpql.parse("node[123][friends..*.info[latest]..name]");
     assert.deepEqual(path, [
       { "expression": { "type": "identifier", "value": "node" }, "operation": "member", "scope": "child" },
       { "expression": { "type": "numeric_literal", "value": 123 }, "operation": "subscript", "scope": "child" },
@@ -574,7 +574,7 @@ suite('graphql#parse-common', function() {
   });
 
   test('parse descendant path component inside subscript', function () {
-    var path = jgp.parse("node[123][friends..name]");
+    var path = jpql.parse("node[123][friends..name]");
     assert.deepEqual(path, [
       {
         "expression": {
@@ -617,7 +617,7 @@ suite('graphql#parse-common', function() {
   });
 
   test('parse member path component inside subscript', function () {
-    var path = jgp.parse("node[123][friends.count]");
+    var path = jpql.parse("node[123][friends.count]");
     assert.deepEqual(path, [
       {
         "expression": {
@@ -660,7 +660,7 @@ suite('graphql#parse-common', function() {
   });
 
   test('parse graphqlite npm example', function () {
-    var path = jgp.parse("node[123][id,name,birthdate[month,day],friends[1[cursor,edges[node[name]]]]]");
+    var path = jpql.parse("node[123][id,name,birthdate[month,day],friends[1[cursor,edges[node[name]]]]]");
     assert.deepEqual(path, [
       { "expression": { "type": "identifier", "value": "node" }, "operation": "member", "scope": "child" },
       { "expression": { "type": "numeric_literal", "value": 123 }, "operation": "subscript", "scope": "child" },
@@ -690,7 +690,7 @@ suite('graphql#parse-common', function() {
   });
 
   test('parse single identifier names in indexers :: should parse nested subscript expressions', function () {
-    var path = jgp.parse("genreLists[rating[average],top[1,2],subscription[expiry]]");
+    var path = jpql.parse("genreLists[rating[average],top[1,2],subscription[expiry]]");
     assert.deepEqual(path, [
       {
         "expression": {
@@ -783,7 +783,7 @@ suite('graphql#parse-common', function() {
   });
 
   test('parse list of identifier names in indexers :: should parse nested subscript expressions', function () {
-    var path = jgp.parse("genreLists[rating,count,top[1,2,3,4],subscription]");
+    var path = jpql.parse("genreLists[rating,count,top[1,2,3,4],subscription]");
     assert.deepEqual(path, [
       {
         "expression": {
@@ -869,7 +869,7 @@ suite('graphql#parse-common', function() {
 
 
   test('parse nested indexers :: should parse identifiers appearing immediately before an indexer as a receiver for the indexer as fields', function () {
-    var path = jgp.parse("genreLists[x[0,1],y123456789y,z123456789z]");
+    var path = jpql.parse("genreLists[x[0,1],y123456789y,z123456789z]");
     assert.deepEqual(path,[
       { "expression": { "type": "identifier", "value": "genreLists" }, "operation": "member", "scope": "child" },
       { "expression": { "type": "union", "value": [
@@ -888,7 +888,7 @@ suite('graphql#parse-common', function() {
 
 
   test('parse deep nested indexers :: should parse nested subscript expressions', function () {
-    var path = jgp.parse("genreLists[x[0[1[2]]],y[0[1[2]]]]");
+    var path = jpql.parse("genreLists[x[0[1[2]]],y[0[1[2]]]]");
     assert.deepEqual(path, [
       {
         "expression": {
@@ -1001,7 +1001,7 @@ suite('graphql#parse-common', function() {
   });
 
   test('parse nested indexers :: parse path with comma separated subscript expressions produces active_position (should fail gracefully at query time)', function () {
-    var path = jgp.parse("genreLists[x,[0],y,[0,1]]");
+    var path = jpql.parse("genreLists[x,[0],y,[0,1]]");
     assert.deepEqual(path, [
       {
         "expression": {
@@ -1087,7 +1087,7 @@ suite('graphql#parse-common', function() {
   });
 
   test('parse nested indexers :: parse path with comma separated subscript expressions succeeds, a leading expression is not required in active position capturing mode', function () {
-    var path = jgp.parse("genreLists[x,[0],y,[0,1]]");
+    var path = jpql.parse("genreLists[x,[0],y,[0,1]]");
     assert.deepEqual(path, [
       {
         "expression": {
@@ -1176,7 +1176,7 @@ suite('graphql#parse-common', function() {
 suite('graphql#parse-negative', function() {
 
   test('FEATURE list of identifier names in indexers :: parse path with adjacent nestabed subscript throws', function () {
-    assert.throws(function() { var path = jgp.parse("genreLists[top[1,2,3,4]top[1,2,3,4]]")});
+    assert.throws(function() { var path = jpql.parse("genreLists[top[1,2,3,4]top[1,2,3,4]]")});
   });
 
 });

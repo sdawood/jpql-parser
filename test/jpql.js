@@ -1,5 +1,5 @@
 var assert = require('chai').assert;
-var jgp = require('../lib/index');
+var jpql = new require('../lib/index')();
 var util = require('util');
 /**
  * graphqlite + json path
@@ -31,7 +31,7 @@ var jsongpath = "node(id: 123) [ id, name, birthdate [ month, day ], friends(fir
 suite('extended-jsonpath#parse', function() {
 
   test('parse path with leading member component succeeds', function() {
-    var path = jgp.parse('.store');
+    var path = jpql.parse('.store');
     assert.deepEqual(path, [
       {
         "expression": {
@@ -45,7 +45,7 @@ suite('extended-jsonpath#parse', function() {
   });
 
   test('parse path with leading descendant member succeeds', function() {
-    var path = jgp.parse('..store');
+    var path = jpql.parse('..store');
     assert.deepEqual(path, [
       {
         "expression": {
@@ -59,7 +59,7 @@ suite('extended-jsonpath#parse', function() {
   });
 
   test('parse path for the first two books via negative slices', function() {
-    var path = jgp.parse('$..book[-3:-2:-1]');
+    var path = jpql.parse('$..book[-3:-2:-1]');
 
     assert.deepEqual(path, [
       { expression: { type: 'root', value: '$' } },
@@ -70,7 +70,7 @@ suite('extended-jsonpath#parse', function() {
 
   test('parse path for the first two books via negative union', function() {
     /** the semantics of negative indexes is an implementation decision */
-    var path = jgp.parse('$..book[-3,-2]');
+    var path = jpql.parse('$..book[-3,-2]');
 
     assert.deepEqual(path, [
       { expression: { type: 'root', value: '$' } },
@@ -86,7 +86,7 @@ suite('extended-jsonpath#parse', function() {
 suite('extended-jsonpath#parse-negative', function() {
 
   test('leading script throws', function() {
-    assert.throws(function() { var path = jgp.parse('()') })
+    assert.throws(function() { var path = jpql.parse('()') })
   });
 
 
