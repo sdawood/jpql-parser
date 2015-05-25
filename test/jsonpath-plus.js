@@ -333,74 +333,884 @@ suite('extended-jsonpath#parse', function() {
     assert.throws(function () { jgp.parse("genereLists[x.$,x.name,y.name].name");});
   });
 
-  test('[X] parse nested subscript expression with leading simple expression (integer)', function () {
+  test('parse nested subscript expression with leading simple expression (integer)', function () {
     var path = jgp.parse("genereLists[0[name,rating]]");
-    assert.deepEqual(path, []);
+    assert.deepEqual(path, [
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "genereLists"
+        },
+        "operation": "member",
+        "scope": "child"
+      },
+      {
+        "branch": {
+          "path": [
+            {
+              "expression": {
+                "type": "union",
+                "value": [
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "name"
+                    }
+                  },
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "rating"
+                    }
+                  }
+                ]
+              },
+              "operation": "subscript",
+              "scope": "child|branch"
+            }
+          ],
+          "scope": "branch"
+        },
+        "expression": {
+          "type": "numeric_literal",
+          "value": 0
+        },
+        "operation": "subscript",
+        "scope": "child"
+      }
+    ]);
   });
 
-  test('[X] parse nested subscript expression with leading simple expression (string-literal)', function () {
+  test('parse nested subscript expression with leading simple expression (string-literal)', function () {
     var path = jgp.parse("genereLists['genre name with spaces'[name,rating]]");
-    assert.deepEqual(path, []);
+    assert.deepEqual(path, [
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "genereLists"
+        },
+        "operation": "member",
+        "scope": "child"
+      },
+      {
+        "branch": {
+          "path": [
+            {
+              "expression": {
+                "type": "union",
+                "value": [
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "name"
+                    }
+                  },
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "rating"
+                    }
+                  }
+                ]
+              },
+              "operation": "subscript",
+              "scope": "child|branch"
+            }
+          ],
+          "scope": "branch"
+        },
+        "expression": {
+          "type": "string_literal",
+          "value": "genre name with spaces"
+        },
+        "operation": "subscript",
+        "scope": "child"
+      }
+    ]);
   });
 
-  test('[X] parse nested subscript expression with leading simple expression (identifier)', function () {
+  test('parse nested subscript expression with leading simple expression (identifier)', function () {
     var path = jgp.parse("genereLists[action[name,rating]]");
-    assert.deepEqual(path, []);
+    assert.deepEqual(path, [
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "genereLists"
+        },
+        "operation": "member",
+        "scope": "child"
+      },
+      {
+        "branch": {
+          "path": [
+            {
+              "expression": {
+                "type": "union",
+                "value": [
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "name"
+                    }
+                  },
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "rating"
+                    }
+                  }
+                ]
+              },
+              "operation": "subscript",
+              "scope": "child|branch"
+            }
+          ],
+          "scope": "branch"
+        },
+        "expression": {
+          "type": "identifier",
+          "value": "action"
+        },
+        "operation": "subscript",
+        "scope": "child"
+      }
+    ]);
   });
 
-  test('[X] parse nested subscript expression with leading simple expression (keyword)', function () {
+  test('parse nested subscript expression with leading simple expression (keyword)', function () {
     var path = jgp.parse("genereLists[true[name,rating]]");
-    assert.deepEqual(path, []);
+    assert.deepEqual(path, [
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "genereLists"
+        },
+        "operation": "member",
+        "scope": "child"
+      },
+      {
+        "branch": {
+          "path": [
+            {
+              "expression": {
+                "type": "union",
+                "value": [
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "name"
+                    }
+                  },
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "rating"
+                    }
+                  }
+                ]
+              },
+              "operation": "subscript",
+              "scope": "child|branch"
+            }
+          ],
+          "scope": "branch"
+        },
+        "expression": {
+          "type": "keyword",
+          "value": true
+        },
+        "operation": "subscript",
+        "scope": "child"
+      }
+    ]);
   });
 
-  test('[X] parse nested subscript expression with leading active expression (array-slice)', function () {
+  test('parse nested subscript expression with leading active expression (array-slice)', function () {
     var path = jgp.parse("genereLists[0:5[name,rating]]");
-    assert.deepEqual(path, []);
+    assert.deepEqual(path, [
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "genereLists"
+        },
+        "operation": "member",
+        "scope": "child"
+      },
+      {
+        "branch": {
+          "path": [
+            {
+              "expression": {
+                "type": "union",
+                "value": [
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "name"
+                    }
+                  },
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "rating"
+                    }
+                  }
+                ]
+              },
+              "operation": "subscript",
+              "scope": "child|branch"
+            }
+          ],
+          "scope": "branch"
+        },
+        "expression": {
+          "type": "slice",
+          "value": "0:5"
+        },
+        "operation": "subscript",
+        "scope": "child"
+      }
+    ]);
   });
 
-  test('[X] parse nested subscript expression with leading active expression (active-array-slice)', function () {
+  test('parse nested subscript expression with leading active expression (active-array-slice)', function () {
     var path = jgp.parse("genereLists[{@.length-5}:{@.length-1}[name,rating]]");
-    assert.deepEqual(path, []);
+    assert.deepEqual(path, [
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "genereLists"
+        },
+        "operation": "member",
+        "scope": "child"
+      },
+      {
+        "branch": {
+          "path": [
+            {
+              "expression": {
+                "type": "union",
+                "value": [
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "name"
+                    }
+                  },
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "rating"
+                    }
+                  }
+                ]
+              },
+              "operation": "subscript",
+              "scope": "child|branch"
+            }
+          ],
+          "scope": "branch"
+        },
+        "expression": {
+          "type": "slice|active",
+          "value": [
+            "{@.length-5}",
+            "{@.length-1}",
+            1
+          ]
+        },
+        "operation": "subscript",
+        "scope": "child"
+      }
+    ]);
   });
 
-  test('[X] parse nested subscript expression with leading active expression (script-expression)', function () {
+  test('parse nested subscript expression with leading active expression (script-expression)', function () {
     var path = jgp.parse("genereLists[(@.length)[name,rating]]");
-    assert.deepEqual(path, []);
+    assert.deepEqual(path, [
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "genereLists"
+        },
+        "operation": "member",
+        "scope": "child"
+      },
+      {
+        "branch": {
+          "path": [
+            {
+              "expression": {
+                "type": "union",
+                "value": [
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "name"
+                    }
+                  },
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "rating"
+                    }
+                  }
+                ]
+              },
+              "operation": "subscript",
+              "scope": "child|branch"
+            }
+          ],
+          "scope": "branch"
+        },
+        "expression": {
+          "type": "script_expression",
+          "value": "(@.length)"
+        },
+        "operation": "subscript",
+        "scope": "child"
+      }
+    ]);
   });
 
-  test('[X] parse nested subscript expression with leading active expression (active-script-expression)', function () {
+  test('parse nested subscript expression with leading active expression (active-script-expression)', function () {
     var path = jgp.parse("genereLists[{$.byRating[-1]}[name,rating]]");
-    assert.deepEqual(path, []);
+    assert.deepEqual(path, [
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "genereLists"
+        },
+        "operation": "member",
+        "scope": "child"
+      },
+      {
+        "branch": {
+          "path": [
+            {
+              "expression": {
+                "type": "union",
+                "value": [
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "name"
+                    }
+                  },
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "rating"
+                    }
+                  }
+                ]
+              },
+              "operation": "subscript",
+              "scope": "child|branch"
+            }
+          ],
+          "scope": "branch"
+        },
+        "expression": {
+          "type": "script_expression|active",
+          "value": "{$.byRating[-1]}"
+        },
+        "operation": "subscript",
+        "scope": "child"
+      }
+    ]);
   });
 
-  test('[X] parse nested subscript expression with leading active expression (star)', function () {
+  test('parse nested subscript expression with leading active expression (star)', function () {
     var path = jgp.parse("genereLists[*[name,rating]]");
-    assert.deepEqual(path, []);
+    assert.deepEqual(path, [
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "genereLists"
+        },
+        "operation": "member",
+        "scope": "child"
+      },
+      {
+        "branch": {
+          "path": [
+            {
+              "expression": {
+                "type": "union",
+                "value": [
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "name"
+                    }
+                  },
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "rating"
+                    }
+                  }
+                ]
+              },
+              "operation": "subscript",
+              "scope": "child|branch"
+            }
+          ],
+          "scope": "branch"
+        },
+        "expression": {
+          "type": "wildcard",
+          "value": "*"
+        },
+        "operation": "subscript",
+        "scope": "child"
+      }
+    ]);
   });
 
-  test('[X] parse nested subscript expression with leading active expression (filter-expression)', function () {
+  test('parse nested subscript expression with leading active expression (filter-expression)', function () {
     var path = jgp.parse("genereLists[?(@.rating>4)[name,rating]]");
-    assert.deepEqual(path, []);
+    assert.deepEqual(path, [
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "genereLists"
+        },
+        "operation": "member",
+        "scope": "child"
+      },
+      {
+        "branch": {
+          "path": [
+            {
+              "expression": {
+                "type": "union",
+                "value": [
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "name"
+                    }
+                  },
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "rating"
+                    }
+                  }
+                ]
+              },
+              "operation": "subscript",
+              "scope": "child|branch"
+            }
+          ],
+          "scope": "branch"
+        },
+        "expression": {
+          "type": "filter_expression",
+          "value": "?(@.rating>4)"
+        },
+        "operation": "subscript",
+        "scope": "child"
+      }
+    ]);
   });
 
-  test('[X] parse nested subscript expression with leading active expression ($)', function () {
+  test('parse nested subscript expression with a list of (filter-expression)', function () {
+    var path = jgp.parse("genereLists[?(@.rating>4)[name,rating],?(@.rating===5),?(@.rating==0)]");
+    assert.deepEqual(path, [
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "genereLists"
+        },
+        "operation": "member",
+        "scope": "child"
+      },
+      {
+        "expression": {
+          "type": "union",
+          "value": [
+            {
+              "branch": {
+                "path": [
+                  {
+                    "expression": {
+                      "type": "union",
+                      "value": [
+                        {
+                          "expression": {
+                            "type": "identifier",
+                            "value": "name"
+                          }
+                        },
+                        {
+                          "expression": {
+                            "type": "identifier",
+                            "value": "rating"
+                          }
+                        }
+                      ]
+                    },
+                    "operation": "subscript",
+                    "scope": "child|branch"
+                  }
+                ],
+                "scope": "branch"
+              },
+              "expression": {
+                "type": "filter_expression",
+                "value": "?(@.rating>4)"
+              }
+            },
+            {
+              "expression": {
+                "type": "filter_expression",
+                "value": "?(@.rating===5)"
+              }
+            },
+            {
+              "expression": {
+                "type": "filter_expression",
+                "value": "?(@.rating==0)"
+              }
+            }
+          ]
+        },
+        "operation": "subscript",
+        "scope": "child"
+      }
+    ]);
+  });
+
+  test('parse nested subscript expression with leading active expression ($)', function () {
     var path = jgp.parse("genereLists[*][$[name,rating]]"); //$$ references child root node, this specific simple case is equivalent to genereLists[*][name,rating]
-    assert.deepEqual(path, []);
+    assert.deepEqual(path, [
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "genereLists"
+        },
+        "operation": "member",
+        "scope": "child"
+      },
+      {
+        "expression": {
+          "type": "wildcard",
+          "value": "*"
+        },
+        "operation": "subscript",
+        "scope": "child"
+      },
+      {
+        "branch": {
+          "path": [
+            {
+              "expression": {
+                "type": "union",
+                "value": [
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "name"
+                    }
+                  },
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "rating"
+                    }
+                  }
+                ]
+              },
+              "operation": "subscript",
+              "scope": "child|branch"
+            }
+          ],
+          "scope": "branch"
+        },
+        "expression": {
+          "type": "root",
+          "value": "$$"
+        },
+        "operation": "subscript",
+        "scope": "child"
+      }
+    ]);
   });
 
-  test('[X] parse nested subscript expression with leading member component expression', function () {
+  test('parse nested subscript expression with leading member component expression', function () {
     var path = jgp.parse("genereLists[*][.action[name,rating],.comedy[name,rating]]"); // .action here is equivalent to identifier action
-    assert.deepEqual(path, []);
+    assert.deepEqual(path, [
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "genereLists"
+        },
+        "operation": "member",
+        "scope": "child"
+      },
+      {
+        "expression": {
+          "type": "wildcard",
+          "value": "*"
+        },
+        "operation": "subscript",
+        "scope": "child"
+      },
+      {
+        "expression": {
+          "type": "union",
+          "value": [
+            {
+              "branch": {
+                "path": [
+                  {
+                    "expression": {
+                      "type": "union",
+                      "value": [
+                        {
+                          "expression": {
+                            "type": "identifier",
+                            "value": "name"
+                          }
+                        },
+                        {
+                          "expression": {
+                            "type": "identifier",
+                            "value": "rating"
+                          }
+                        }
+                      ]
+                    },
+                    "operation": "subscript",
+                    "scope": "child|branch"
+                  }
+                ],
+                "scope": "branch"
+              },
+              "expression": {
+                "type": "identifier",
+                "value": "action"
+              },
+              "scope": "child"
+            },
+            {
+              "branch": {
+                "path": [
+                  {
+                    "expression": {
+                      "type": "union",
+                      "value": [
+                        {
+                          "expression": {
+                            "type": "identifier",
+                            "value": "name"
+                          }
+                        },
+                        {
+                          "expression": {
+                            "type": "identifier",
+                            "value": "rating"
+                          }
+                        }
+                      ]
+                    },
+                    "operation": "subscript",
+                    "scope": "child|branch"
+                  }
+                ],
+                "scope": "branch"
+              },
+              "expression": {
+                "type": "identifier",
+                "value": "comedy"
+              },
+              "scope": "child"
+            }
+          ]
+        },
+        "operation": "subscript",
+        "scope": "child"
+      }
+    ]);
   });
 
-  test('[X] parse nested subscript expression with leading descendant component expression', function () {
+  test('parse nested subscript expression with leading descendant component expression', function () {
     var path = jgp.parse("genereLists[..action[name,rating],..comedy[name,rating]]");
-    assert.deepEqual(path, []);
+    assert.deepEqual(path, [
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "genereLists"
+        },
+        "operation": "member",
+        "scope": "child"
+      },
+      {
+        "expression": {
+          "type": "union",
+          "value": [
+            {
+              "branch": {
+                "path": [
+                  {
+                    "expression": {
+                      "type": "union",
+                      "value": [
+                        {
+                          "expression": {
+                            "type": "identifier",
+                            "value": "name"
+                          }
+                        },
+                        {
+                          "expression": {
+                            "type": "identifier",
+                            "value": "rating"
+                          }
+                        }
+                      ]
+                    },
+                    "operation": "subscript",
+                    "scope": "child|branch"
+                  }
+                ],
+                "scope": "branch"
+              },
+              "expression": {
+                "type": "identifier",
+                "value": "action"
+              },
+              "scope": "descendant"
+            },
+            {
+              "branch": {
+                "path": [
+                  {
+                    "expression": {
+                      "type": "union",
+                      "value": [
+                        {
+                          "expression": {
+                            "type": "identifier",
+                            "value": "name"
+                          }
+                        },
+                        {
+                          "expression": {
+                            "type": "identifier",
+                            "value": "rating"
+                          }
+                        }
+                      ]
+                    },
+                    "operation": "subscript",
+                    "scope": "child|branch"
+                  }
+                ],
+                "scope": "branch"
+              },
+              "expression": {
+                "type": "identifier",
+                "value": "comedy"
+              },
+              "scope": "descendant"
+            }
+          ]
+        },
+        "operation": "subscript",
+        "scope": "child"
+      }
+    ]);
   });
 
-  test('[X] parse nested subscript expression without leading expression (active-index)', function () {
-    var path = jgp.parse("genereLists[[name,rating]]");
-    assert.deepEqual(path, []);
+  test('parse nested subscript expression without leading expression (active-index)', function () {
+    var path = jgp.parse("genereLists[[name,rating],[name,rating]]");
+    assert.deepEqual(path, [
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "genereLists"
+        },
+        "operation": "member",
+        "scope": "child"
+      },
+      {
+        "expression": {
+          "type": "union",
+          "value": [
+            {
+              "branch": {
+                "path": [
+                  {
+                    "expression": {
+                      "type": "union",
+                      "value": [
+                        {
+                          "expression": {
+                            "type": "identifier",
+                            "value": "name"
+                          }
+                        },
+                        {
+                          "expression": {
+                            "type": "identifier",
+                            "value": "rating"
+                          }
+                        }
+                      ]
+                    },
+                    "operation": "subscript",
+                    "scope": "child|branch"
+                  }
+                ],
+                "scope": "branch"
+              },
+              "expression": {
+                "type": "active_position",
+                "value": "{index}"
+              }
+            },
+            {
+              "branch": {
+                "path": [
+                  {
+                    "expression": {
+                      "type": "union",
+                      "value": [
+                        {
+                          "expression": {
+                            "type": "identifier",
+                            "value": "name"
+                          }
+                        },
+                        {
+                          "expression": {
+                            "type": "identifier",
+                            "value": "rating"
+                          }
+                        }
+                      ]
+                    },
+                    "operation": "subscript",
+                    "scope": "child|branch"
+                  }
+                ],
+                "scope": "branch"
+              },
+              "expression": {
+                "type": "active_position",
+                "value": "{index}"
+              }
+            }
+          ]
+        },
+        "operation": "subscript",
+        "scope": "child"
+      }
+    ]);
   });
 
 });
