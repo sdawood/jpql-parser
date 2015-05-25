@@ -968,37 +968,11 @@ suite('extended-jsonpath#parse', function() {
                 "path": [
                   {
                     "expression": {
-                      "type": "union",
-                      "value": [
-                        {
-                          "expression": {
-                            "type": "identifier",
-                            "value": "name"
-                          }
-                        },
-                        {
-                          "expression": {
-                            "type": "identifier",
-                            "value": "rating"
-                          }
-                        }
-                      ]
+                      "type": "identifier",
+                      "value": "action"
                     },
-                    "operation": "subscript",
-                    "scope": "child|branch"
-                  }
-                ],
-                "scope": "branch"
-              },
-              "expression": {
-                "type": "identifier",
-                "value": "action"
-              },
-              "scope": "child"
-            },
-            {
-              "branch": {
-                "path": [
+                    "scope": "member|branch"
+                  },
                   {
                     "expression": {
                       "type": "union",
@@ -1024,10 +998,48 @@ suite('extended-jsonpath#parse', function() {
                 "scope": "branch"
               },
               "expression": {
-                "type": "identifier",
-                "value": "comedy"
+                "type": "active_position",
+                "value": "{index}"
+              }
+            },
+            {
+              "branch": {
+                "path": [
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "comedy"
+                    },
+                    "scope": "member|branch"
+                  },
+                  {
+                    "expression": {
+                      "type": "union",
+                      "value": [
+                        {
+                          "expression": {
+                            "type": "identifier",
+                            "value": "name"
+                          }
+                        },
+                        {
+                          "expression": {
+                            "type": "identifier",
+                            "value": "rating"
+                          }
+                        }
+                      ]
+                    },
+                    "operation": "subscript",
+                    "scope": "child|branch"
+                  }
+                ],
+                "scope": "branch"
               },
-              "scope": "child"
+              "expression": {
+                "type": "active_position",
+                "value": "{index}"
+              }
             }
           ]
         },
@@ -1127,7 +1139,7 @@ suite('extended-jsonpath#parse', function() {
   });
 
   test('parse nested subscript expression without leading expression (active-index)', function () {
-    var path = jgp.parse("genereLists[[name,rating],[name,rating]]");
+    var path = jgp.parse("genereLists[.rating,[name,rating],.name]");
     assert.deepEqual(path, [
       {
         "expression": {
@@ -1146,24 +1158,10 @@ suite('extended-jsonpath#parse', function() {
                 "path": [
                   {
                     "expression": {
-                      "type": "union",
-                      "value": [
-                        {
-                          "expression": {
-                            "type": "identifier",
-                            "value": "name"
-                          }
-                        },
-                        {
-                          "expression": {
-                            "type": "identifier",
-                            "value": "rating"
-                          }
-                        }
-                      ]
+                      "type": "identifier",
+                      "value": "rating"
                     },
-                    "operation": "subscript",
-                    "scope": "child|branch"
+                    "scope": "member|branch"
                   }
                 ],
                 "scope": "branch"
@@ -1204,6 +1202,24 @@ suite('extended-jsonpath#parse', function() {
                 "type": "active_position",
                 "value": "{index}"
               }
+            },
+            {
+              "branch": {
+                "path": [
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "name"
+                    },
+                    "scope": "member|branch"
+                  }
+                ],
+                "scope": "branch"
+              },
+              "expression": {
+                "type": "active_position",
+                "value": "{index}"
+              }
             }
           ]
         },
@@ -1212,5 +1228,280 @@ suite('extended-jsonpath#parse', function() {
       }
     ]);
   });
+
+
+  test('parse list of (longer) nested path components list', function () {
+    var path = jgp.parse("$.store.book[*][0.author..name,1.author..name,2.author..name,3.author..name]");
+    assert.deepEqual(path, [
+      {
+        "expression": {
+          "type": "root",
+          "value": "$"
+        }
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "store"
+        },
+        "operation": "member",
+        "scope": "child"
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "book"
+        },
+        "operation": "member",
+        "scope": "child"
+      },
+      {
+        "expression": {
+          "type": "wildcard",
+          "value": "*"
+        },
+        "operation": "subscript",
+        "scope": "child"
+      },
+      {
+        "expression": {
+          "type": "union",
+          "value": [
+            {
+              "branch": {
+                "path": [
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "author"
+                    },
+                    "operation": "member",
+                    "scope": "child|branch"
+                  },
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "name"
+                    },
+                    "operation": "member",
+                    "scope": "descendant|branch"
+                  }
+                ],
+                "scope": "branch"
+              },
+              "expression": {
+                "type": "numeric_literal",
+                "value": 0
+              }
+            },
+            {
+              "branch": {
+                "path": [
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "author"
+                    },
+                    "operation": "member",
+                    "scope": "child|branch"
+                  },
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "name"
+                    },
+                    "operation": "member",
+                    "scope": "descendant|branch"
+                  }
+                ],
+                "scope": "branch"
+              },
+              "expression": {
+                "type": "numeric_literal",
+                "value": 1
+              }
+            },
+            {
+              "branch": {
+                "path": [
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "author"
+                    },
+                    "operation": "member",
+                    "scope": "child|branch"
+                  },
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "name"
+                    },
+                    "operation": "member",
+                    "scope": "descendant|branch"
+                  }
+                ],
+                "scope": "branch"
+              },
+              "expression": {
+                "type": "numeric_literal",
+                "value": 2
+              }
+            },
+            {
+              "branch": {
+                "path": [
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "author"
+                    },
+                    "operation": "member",
+                    "scope": "child|branch"
+                  },
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "name"
+                    },
+                    "operation": "member",
+                    "scope": "descendant|branch"
+                  }
+                ],
+                "scope": "branch"
+              },
+              "expression": {
+                "type": "numeric_literal",
+                "value": 3
+              }
+            }
+          ]
+        },
+        "operation": "subscript",
+        "scope": "child"
+      }
+    ]);
+  });
+
+test('parse list of single nested subscript component with leading nested path component', function () {
+    var path = jgp.parse('$.store.book[0.author[main,co][..name[first,last],..twitter]]');
+    assert.deepEqual(path, [
+      {
+        "expression": {
+          "type": "root",
+          "value": "$"
+        }
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "store"
+        },
+        "operation": "member",
+        "scope": "child"
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "book"
+        },
+        "operation": "member",
+        "scope": "child"
+      },
+      {
+        "branch": {
+          "path": [
+            {
+              "expression": {
+                "type": "identifier",
+                "value": "author"
+              },
+              "operation": "member",
+              "scope": "child|branch"
+            },
+            {
+              "expression": {
+                "type": "union",
+                "value": [
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "main"
+                    }
+                  },
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "co"
+                    }
+                  }
+                ]
+              },
+              "operation": "subscript",
+              "scope": "child|branch"
+            },
+            {
+              "expression": {
+                "type": "union",
+                "value": [
+                  {
+                    "branch": {
+                      "path": [
+                        {
+                          "expression": {
+                            "type": "union",
+                            "value": [
+                              {
+                                "expression": {
+                                  "type": "identifier",
+                                  "value": "first"
+                                }
+                              },
+                              {
+                                "expression": {
+                                  "type": "identifier",
+                                  "value": "last"
+                                }
+                              }
+                            ]
+                          },
+                          "operation": "subscript",
+                          "scope": "child|branch"
+                        }
+                      ],
+                      "scope": "branch"
+                    },
+                    "expression": {
+                      "type": "identifier",
+                      "value": "name"
+                    },
+                    "scope": "descendant"
+                  },
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "twitter"
+                    },
+                    "scope": "descendant"
+                  }
+                ]
+              },
+              "operation": "subscript",
+              "scope": "child|branch"
+            }
+          ],
+          "scope": "branch"
+        },
+        "expression": {
+          "type": "numeric_literal",
+          "value": 0
+        },
+        "operation": "subscript",
+        "scope": "child"
+      }
+    ]);
+  });
+
+
 
 });
