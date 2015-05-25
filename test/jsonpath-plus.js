@@ -333,4 +333,74 @@ suite('extended-jsonpath#parse', function() {
     assert.throws(function () { jgp.parse("genereLists[x.$,x.name,y.name].name");});
   });
 
+  test('[X] parse nested subscript expression with leading simple expression (integer)', function () {
+    var path = jgp.parse("genereLists[0[name,rating]]");
+    assert.deepEqual(path, []);
+  });
+
+  test('[X] parse nested subscript expression with leading simple expression (string-literal)', function () {
+    var path = jgp.parse("genereLists['genre name with spaces'[name,rating]]");
+    assert.deepEqual(path, []);
+  });
+
+  test('[X] parse nested subscript expression with leading simple expression (identifier)', function () {
+    var path = jgp.parse("genereLists[action[name,rating]]");
+    assert.deepEqual(path, []);
+  });
+
+  test('[X] parse nested subscript expression with leading simple expression (keyword)', function () {
+    var path = jgp.parse("genereLists[true[name,rating]]");
+    assert.deepEqual(path, []);
+  });
+
+  test('[X] parse nested subscript expression with leading active expression (array-slice)', function () {
+    var path = jgp.parse("genereLists[0:5[name,rating]]");
+    assert.deepEqual(path, []);
+  });
+
+  test('[X] parse nested subscript expression with leading active expression (active-array-slice)', function () {
+    var path = jgp.parse("genereLists[{@.length-5}:{@.length-1}[name,rating]]");
+    assert.deepEqual(path, []);
+  });
+
+  test('[X] parse nested subscript expression with leading active expression (script-expression)', function () {
+    var path = jgp.parse("genereLists[(@.length)[name,rating]]");
+    assert.deepEqual(path, []);
+  });
+
+  test('[X] parse nested subscript expression with leading active expression (active-script-expression)', function () {
+    var path = jgp.parse("genereLists[{$.byRating[-1]}[name,rating]]");
+    assert.deepEqual(path, []);
+  });
+
+  test('[X] parse nested subscript expression with leading active expression (star)', function () {
+    var path = jgp.parse("genereLists[*[name,rating]]");
+    assert.deepEqual(path, []);
+  });
+
+  test('[X] parse nested subscript expression with leading active expression (filter-expression)', function () {
+    var path = jgp.parse("genereLists[?(@.rating>4)[name,rating]]");
+    assert.deepEqual(path, []);
+  });
+
+  test('[X] parse nested subscript expression with leading active expression ($)', function () {
+    var path = jgp.parse("genereLists[*][$[name,rating]]"); //$$ references child root node, this specific simple case is equivalent to genereLists[*][name,rating]
+    assert.deepEqual(path, []);
+  });
+
+  test('[X] parse nested subscript expression with leading member component expression', function () {
+    var path = jgp.parse("genereLists[*][.action[name,rating],.comedy[name,rating]]"); // .action here is equivalent to identifier action
+    assert.deepEqual(path, []);
+  });
+
+  test('[X] parse nested subscript expression with leading descendant component expression', function () {
+    var path = jgp.parse("genereLists[..action[name,rating],..comedy[name,rating]]");
+    assert.deepEqual(path, []);
+  });
+
+  test('[X] parse nested subscript expression without leading expression (active-index)', function () {
+    var path = jgp.parse("genereLists[[name,rating]]");
+    assert.deepEqual(path, []);
+  });
+
 });
