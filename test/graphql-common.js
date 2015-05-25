@@ -317,19 +317,58 @@ suite('graphql#parse-common', function() {
   test('parse branch with leading descendant member expression', function () {
     var path = jpql.parse("node[123][friends[..*,count]]");
     assert.deepEqual(path, [
-      { "expression": { "type": "identifier", "value": "node" }, "operation": "member", "scope": "child" },
-      { "expression": { "type": "numeric_literal", "value": 123 }, "operation": "subscript", "scope": "child" },
-      { "expression": { "type": "identifier", "value": "friends" }, "branch":
-        { "path": [
-          { "expression": { "type": "union", "value": [
-            { "expression": { "type": "active_position", "value": "{index}" }, "branch":
-              { "path": [
-                { "expression": { "type": "wildcard", "value": "*" }, "operation": "member", "scope": "descendant|branch" } ],
-                "scope": "branch" } },
-            { "expression": { "type": "identifier", "value": "count" } } ] },
-            "operation": "subscript", "scope": "child|branch" } ],
-          "scope": "branch" } ,
-        "operation": "subscript", "scope": "child" } ]);
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "node"
+        },
+        "operation": "member",
+        "scope": "child"
+      },
+      {
+        "expression": {
+          "type": "numeric_literal",
+          "value": 123
+        },
+        "operation": "subscript",
+        "scope": "child"
+      },
+      {
+        "branch": {
+          "path": [
+            {
+              "expression": {
+                "type": "union",
+                "value": [
+                  {
+                    "expression": {
+                      "type": "wildcard",
+                      "value": "*"
+                    },
+                    "scope": "descendant"
+                  },
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "count"
+                    }
+                  }
+                ]
+              },
+              "operation": "subscript",
+              "scope": "child|branch"
+            }
+          ],
+          "scope": "branch"
+        },
+        "expression": {
+          "type": "identifier",
+          "value": "friends"
+        },
+        "operation": "subscript",
+        "scope": "child"
+      }
+    ]);
   });
 
   test('parse branch with path member components', function () {
