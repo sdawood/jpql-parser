@@ -971,7 +971,8 @@ suite('extended-jsonpath#parse', function() {
                       "type": "identifier",
                       "value": "action"
                     },
-                    "scope": "member|branch"
+                    "operation": "member",
+                    "scope": "child|branch"
                   },
                   {
                     "expression": {
@@ -1010,7 +1011,8 @@ suite('extended-jsonpath#parse', function() {
                       "type": "identifier",
                       "value": "comedy"
                     },
-                    "scope": "member|branch"
+                    "operation": "member",
+                    "scope": "child|branch"
                   },
                   {
                     "expression": {
@@ -1095,6 +1097,7 @@ suite('extended-jsonpath#parse', function() {
                 "type": "identifier",
                 "value": "action"
               },
+              "operation": "member",
               "scope": "descendant"
             },
             {
@@ -1128,6 +1131,7 @@ suite('extended-jsonpath#parse', function() {
                 "type": "identifier",
                 "value": "comedy"
               },
+              "operation": "member",
               "scope": "descendant"
             }
           ]
@@ -1161,7 +1165,8 @@ suite('extended-jsonpath#parse', function() {
                       "type": "identifier",
                       "value": "rating"
                     },
-                    "scope": "member|branch"
+                    "operation": "member",
+                    "scope": "child|branch"
                   }
                 ],
                 "scope": "branch"
@@ -1211,7 +1216,8 @@ suite('extended-jsonpath#parse', function() {
                       "type": "identifier",
                       "value": "name"
                     },
-                    "scope": "member|branch"
+                    "operation": "member",
+                    "scope": "child|branch"
                   }
                 ],
                 "scope": "branch"
@@ -1475,6 +1481,7 @@ test('parse list of single nested subscript component with leading nested path c
                       "type": "identifier",
                       "value": "name"
                     },
+                    "operation": "member",
                     "scope": "descendant"
                   },
                   {
