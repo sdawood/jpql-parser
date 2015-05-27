@@ -2010,17 +2010,348 @@ test('parse list of single nested subscript component with leading nested path c
     ]);
   });
 
-  test('[X] all books [author,title] via list of subscript expression with first level call expression -> active position anchor', function() {
-    var results = jpql.parse('$..book[(delay: 100).title,(delay: 100).price]');
-    assert.deepEqual(results, [false]);
+  test('[Y] all books [author,title] via list of subscript expression with first level call expression -> active position anchor', function() {
+    var results = jpql.parse('$..book[(delay: 100).title,(delay: 100 ).price]');
+    assert.deepEqual(results, [
+      {
+        "expression": {
+          "type": "root",
+          "value": "$"
+        }
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "book"
+        },
+        "operation": "member",
+        "scope": "descendant"
+      },
+      {
+        "expression": {
+          "type": "union",
+          "value": [
+            {
+              "branch": {
+                "path": [
+                  {
+                    "expression": {
+                      "type": "call_expression",
+                      "value": {
+                        "params": {
+                          "delay": "100"
+                        }
+                      }
+                    },
+                    "operation": "subscript",
+                    "scope": "child|branch"
+                  },
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "title"
+                    },
+                    "operation": "member",
+                    "scope": "child|branch"
+                  }
+                ],
+                "scope": "branch"
+              },
+              "expression": {
+                "type": "active_position",
+                "value": "{{$index}}"
+              }
+            },
+            {
+              "branch": {
+                "path": [
+                  {
+                    "expression": {
+                      "type": "call_expression",
+                      "value": {
+                        "params": {
+                          "delay": "100 "
+                        }
+                      }
+                    },
+                    "operation": "subscript",
+                    "scope": "child|branch"
+                  },
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "price"
+                    },
+                    "operation": "member",
+                    "scope": "child|branch"
+                  }
+                ],
+                "scope": "branch"
+              },
+              "expression": {
+                "type": "active_position",
+                "value": "{{$index}}"
+              }
+            }
+          ]
+        },
+        "operation": "subscript",
+        "scope": "child"
+      }
+    ]);
   });
 
-  test('[X] subscript-style call expression', function() {
+  test('[Y] all books [author,title] via list of subscript expression with first level call expression -> active position anchor', function() {
+    var results = jpql.parse('$..book[(delay: 100).title,(delay: 100 ).price]');
+    assert.deepEqual(results, [
+      {
+        "expression": {
+          "type": "root",
+          "value": "$"
+        }
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "book"
+        },
+        "operation": "member",
+        "scope": "descendant"
+      },
+      {
+        "expression": {
+          "type": "union",
+          "value": [
+            {
+              "branch": {
+                "path": [
+                  {
+                    "expression": {
+                      "type": "call_expression",
+                      "value": {
+                        "params": {
+                          "delay": "100"
+                        }
+                      }
+                    },
+                    "operation": "subscript",
+                    "scope": "child|branch"
+                  },
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "title"
+                    },
+                    "operation": "member",
+                    "scope": "child|branch"
+                  }
+                ],
+                "scope": "branch"
+              },
+              "expression": {
+                "type": "active_position",
+                "value": "{{$index}}"
+              }
+            },
+            {
+              "branch": {
+                "path": [
+                  {
+                    "expression": {
+                      "type": "call_expression",
+                      "value": {
+                        "params": {
+                          "delay": "100 "
+                        }
+                      }
+                    },
+                    "operation": "subscript",
+                    "scope": "child|branch"
+                  },
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "price"
+                    },
+                    "operation": "member",
+                    "scope": "child|branch"
+                  }
+                ],
+                "scope": "branch"
+              },
+              "expression": {
+                "type": "active_position",
+                "value": "{{$index}}"
+              }
+            }
+          ]
+        },
+        "operation": "subscript",
+        "scope": "child"
+      }
+    ]);
+  });
+
+  test('[?] in call expression, spaces are illegal between the opening ( and the key, and between the key and the ":", parse as script expression', function() {
+    var results = jpql.parse('$..book[( delay: 100).title,( delay: 100 ).price]');
+    assert.deepEqual(results, [
+      {
+        "expression": {
+          "type": "root",
+          "value": "$"
+        }
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "book"
+        },
+        "operation": "member",
+        "scope": "descendant"
+      },
+      {
+        "expression": {
+          "type": "union",
+          "value": [
+            {
+              "branch": {
+                "path": [
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "title"
+                    },
+                    "operation": "member",
+                    "scope": "child|branch"
+                  }
+                ],
+                "scope": "branch"
+              },
+              "expression": {
+                "type": "script_expression",
+                "value": "( delay: 100)"
+              }
+            },
+            {
+              "branch": {
+                "path": [
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "price"
+                    },
+                    "operation": "member",
+                    "scope": "child|branch"
+                  }
+                ],
+                "scope": "branch"
+              },
+              "expression": {
+                "type": "script_expression",
+                "value": "( delay: 100 )"
+              }
+            }
+          ]
+        },
+        "operation": "subscript",
+        "scope": "child"
+      }
+    ]);
+  });
+
+  test('[Y] subscript-style call expression with identifier style key', function() {
     var results = jpql.parse('$..book(take: 2).title'); //subscript style call
-    assert.deepEqual(results, [false]);
+    assert.deepEqual(results, [
+      {
+        "expression": {
+          "type": "root",
+          "value": "$"
+        }
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "book"
+        },
+        "operation": "member",
+        "scope": "descendant"
+      },
+      {
+        "expression": {
+          "type": "call_expression",
+          "value": {
+            "params": {
+              "take": "2"
+            }
+          }
+        },
+        "operation": "subscript",
+        "scope": "child"
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "title"
+        },
+        "operation": "member",
+        "scope": "child"
+      }
+    ]);
   });
 
-  test('[X] just a member followed by a script expression, while implementation can produce the same result, the parser does not consider this a call expression, not to be confused with book(take: 2)', function() {
+  test('[negative] subscript-style call expression with double quote string style key throws', function() {
+    assert.throws(function(){jpql.parse('$..book("take": 2).title')}); //subscript style call
+  });
+
+  test('[negative] subscript-style call expression with single quote string style key throws', function() {
+    assert.throws(function(){jpql.parse("$..book('take': 2).title")}); //subscript style call
+  });
+
+  test('[negative] subscript-style call expression with integer literal style key throws', function() {
+    assert.throws(function(){jpql.parse("$..book(0: 2).title")}); //subscript style call
+  });
+
+  test('[?] subscript-style call expression with keyword literal style key coerces into string', function() {
+    var results = jpql.parse("$..book(true: 2).title"); //subscript style call
+    assert.deepEqual(results, [
+      {
+        "expression": {
+          "type": "root",
+          "value": "$"
+        }
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "book"
+        },
+        "operation": "member",
+        "scope": "descendant"
+      },
+      {
+        "expression": {
+          "type": "call_expression",
+          "value": {
+            "params": {
+              "true": "2"
+            }
+          }
+        },
+        "operation": "subscript",
+        "scope": "child"
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "title"
+        },
+        "operation": "member",
+        "scope": "child"
+      }
+    ]);
+  });
+
+  test('[Y] just a member followed by a script expression, while implementation can produce the same result, the parser does not consider this a call expression, not to be confused with book(take: 2)', function() {
     var results = jpql.parse('$..book.take.(2).title'); //subscript style call
     assert.deepEqual(results, [
       {
@@ -2069,8 +2400,51 @@ test('parse list of single nested subscript component with leading nested path c
   });
 
   test('[X] descendant call expression', function() {
-    var results = jpql.parse('$.store.*..(take: 1)'); //first of each category
-    assert.deepEqual(results, [false]);
+    var results = jpql.parse('$.store.*..(take: 1).name'); //first of each category
+    assert.deepEqual(results, [
+      {
+        "expression": {
+          "type": "root",
+          "value": "$"
+        }
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "store"
+        },
+        "operation": "member",
+        "scope": "child"
+      },
+      {
+        "expression": {
+          "type": "wildcard",
+          "value": "*"
+        },
+        "operation": "member",
+        "scope": "child"
+      },
+      {
+        "expression": {
+          "type": "call_expression",
+          "value": {
+            "params": {
+              "take": "1"
+            }
+          }
+        },
+        "operation": "subscript",
+        "scope": "descendant"
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "name"
+        },
+        "operation": "member",
+        "scope": "child"
+      }
+    ]);
   });
 
   test('[X] member call expression throws', function() {
