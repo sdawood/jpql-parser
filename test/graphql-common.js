@@ -3,23 +3,314 @@ var jpql = new require('../lib/index')();
 
 suite('graphql#parse-common', function() {
 
-//  test('Feature graphqlite npm example', function () {
-//    var path = jpql.parse("node[123][id,name,birthdate[month,day],friends[1[cursor,edges[node[name]]]]]");
-//    assert.deepEqual(path, []);
-//  });
+  test('Feature graphqlite npm example', function () {
+    var path = jpql.parse("node(id: 123){id,name,birthdate{month,day}, friends(first: 1){cursor,edges{node{name}}}}");
+    assert.deepEqual(path, [
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "node"
+        },
+        "operation": "member",
+        "scope": "child"
+      },
+      {
+        "expression": {
+          "type": "call_expression",
+          "value": {
+            "params": {
+              "id": "123"
+            }
+          }
+        },
+        "operation": "subscript",
+        "scope": "child"
+      },
+      {
+        "expression": {
+          "type": "union",
+          "value": [
+            {
+              "expression": {
+                "type": "identifier",
+                "value": "id"
+              }
+            },
+            {
+              "expression": {
+                "type": "identifier",
+                "value": "name"
+              }
+            },
+            {
+              "branch": {
+                "path": [
+                  {
+                    "expression": {
+                      "type": "union",
+                      "value": [
+                        {
+                          "expression": {
+                            "type": "identifier",
+                            "value": "month"
+                          }
+                        },
+                        {
+                          "expression": {
+                            "type": "identifier",
+                            "value": "day"
+                          }
+                        }
+                      ]
+                    },
+                    "operation": "subscript",
+                    "scope": "child|branch"
+                  }
+                ],
+                "scope": "branch"
+              },
+              "expression": {
+                "type": "identifier",
+                "value": "birthdate"
+              }
+            },
+            {
+              "branch": {
+                "path": [
+                  {
+                    "expression": {
+                      "type": "call_expression",
+                      "value": {
+                        "params": {
+                          "first": "1"
+                        }
+                      }
+                    },
+                    "operation": "subscript",
+                    "scope": "child|branch"
+                  },
+                  {
+                    "expression": {
+                      "type": "union",
+                      "value": [
+                        {
+                          "expression": {
+                            "type": "identifier",
+                            "value": "cursor"
+                          }
+                        },
+                        {
+                          "branch": {
+                            "path": [
+                              {
+                                "branch": {
+                                  "path": [
+                                    {
+                                      "expression": {
+                                        "type": "identifier",
+                                        "value": "name"
+                                      },
+                                      "operation": "subscript",
+                                      "scope": "child|branch"
+                                    }
+                                  ],
+                                  "scope": "branch"
+                                },
+                                "expression": {
+                                  "type": "identifier",
+                                  "value": "node"
+                                },
+                                "operation": "subscript",
+                                "scope": "child|branch"
+                              }
+                            ],
+                            "scope": "branch"
+                          },
+                          "expression": {
+                            "type": "identifier",
+                            "value": "edges"
+                          }
+                        }
+                      ]
+                    },
+                    "operation": "subscript",
+                    "scope": "child|branch"
+                  }
+                ],
+                "scope": "branch"
+              },
+              "expression": {
+                "type": "identifier",
+                "value": "friends"
+              }
+            }
+          ]
+        },
+        "operation": "subscript",
+        "scope": "child"
+      }
+    ]);
+  });
 
-  test('parse branches of listable subscript expressions with active index', function () {
-    var path = jpql.parse("node[123][friends[[10:11],[110:111]]]");
+ test('Feature graphqlite npm example returning union as an Observable', function () {
+    var path = jpql.parse("node(id: 123){id,name,birthdate{month,day}, friends(first: 1).observable{edges{node{name}}}}");
+    assert.deepEqual(path, [
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "node"
+        },
+        "operation": "member",
+        "scope": "child"
+      },
+      {
+        "expression": {
+          "type": "call_expression",
+          "value": {
+            "params": {
+              "id": "123"
+            }
+          }
+        },
+        "operation": "subscript",
+        "scope": "child"
+      },
+      {
+        "expression": {
+          "type": "union",
+          "value": [
+            {
+              "expression": {
+                "type": "identifier",
+                "value": "id"
+              }
+            },
+            {
+              "expression": {
+                "type": "identifier",
+                "value": "name"
+              }
+            },
+            {
+              "branch": {
+                "path": [
+                  {
+                    "expression": {
+                      "type": "union",
+                      "value": [
+                        {
+                          "expression": {
+                            "type": "identifier",
+                            "value": "month"
+                          }
+                        },
+                        {
+                          "expression": {
+                            "type": "identifier",
+                            "value": "day"
+                          }
+                        }
+                      ]
+                    },
+                    "operation": "subscript",
+                    "scope": "child|branch"
+                  }
+                ],
+                "scope": "branch"
+              },
+              "expression": {
+                "type": "identifier",
+                "value": "birthdate"
+              }
+            },
+            {
+              "branch": {
+                "path": [
+                  {
+                    "expression": {
+                      "type": "call_expression",
+                      "value": {
+                        "params": {
+                          "first": "1"
+                        }
+                      }
+                    },
+                    "operation": "subscript",
+                    "scope": "child|branch"
+                  },
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "observable"
+                    },
+                    "operation": "member",
+                    "scope": "child|branch"
+                  },
+                  {
+                    "branch": {
+                      "path": [
+                        {
+                          "branch": {
+                            "path": [
+                              {
+                                "expression": {
+                                  "type": "identifier",
+                                  "value": "name"
+                                },
+                                "operation": "subscript",
+                                "scope": "child|branch"
+                              }
+                            ],
+                            "scope": "branch"
+                          },
+                          "expression": {
+                            "type": "identifier",
+                            "value": "node"
+                          },
+                          "operation": "subscript",
+                          "scope": "child|branch"
+                        }
+                      ],
+                      "scope": "branch"
+                    },
+                    "expression": {
+                      "type": "identifier",
+                      "value": "edges"
+                    },
+                    "operation": "subscript",
+                    "scope": "child|branch"
+                  }
+                ],
+                "scope": "branch"
+              },
+              "expression": {
+                "type": "identifier",
+                "value": "friends"
+              }
+            }
+          ]
+        },
+        "operation": "subscript",
+        "scope": "child"
+      }
+    ]);
+  });
+
+  test('parse branches of listable subscript expressions with active index with new lines', function () {
+    var path = jpql.parse("node[123][\n" +
+        "friends[\n" +
+          "[10:11],[110:111]]\n" +
+        "]");
     assert.deepEqual(path, [
       { "expression": { "type": "identifier", "value": "node" }, "operation": "member", "scope": "child" },
       { "expression": { "type": "numeric_literal", "value": 123 }, "operation": "subscript", "scope": "child" },
       { "expression": { "type": "identifier", "value": "friends" }, "operation": "subscript", "scope": "child" , "branch":
         { "path": [ { "expression": { "type": "union", "value": [
-          { "expression": { "type": "active_position", "value": "{index}" }, "branch": { "path": [
+          { "expression": { "type": "active_position", "value": "{{$index}}" }, "branch": { "path": [
             { "expression": { "type": "slice", "value": "10:11" }, "operation": "subscript", "scope": "child|branch" }
             ],
             "scope": "branch" } },
-          { "expression": { "type": "active_position", "value": "{index}" }, "branch": { "path": [
+          { "expression": { "type": "active_position", "value": "{{$index}}" }, "branch": { "path": [
               { "expression": { "type": "slice", "value": "110:111" }, "operation": "subscript", "scope": "child|branch" }
               ],
               "scope": "branch" }
@@ -29,8 +320,8 @@ suite('graphql#parse-common', function() {
     ]);
   });
 
-  test('parse branches of listable subscript expressions with index', function () {
-    var path = jpql.parse("node[123][friends[0[10:11],1[110:111]]]");
+  test('parse branches of listable subscript expressions with index with spaces', function () {
+    var path = jpql.parse("node [ 123 ] [ friends \t[ 0 [ 10:11 ], 1 \t[ 110:111 ] ] ]");
     assert.deepEqual(path, [
       { "expression": { "type": "identifier", "value": "node" }, "operation": "member", "scope": "child" },
       { "expression": { "type": "numeric_literal", "value": 123 }, "operation": "subscript", "scope": "child" },
@@ -50,8 +341,8 @@ suite('graphql#parse-common', function() {
     ]);
   });
 
-  test('parse branches of listable ACTIVE_SLICE subscript expressions', function () {
-    var path = jpql.parse("node[123][friends[[1:10],{@length-20}:{@length-10},100]]");
+  test('parse branches of listable ACTIVE_SLICE subscript expressions with curvey {} subscripts', function () {
+    var path = jpql.parse("node{123}{friends{{1:10},({@length-20}):({@length-10}),100}}");
     assert.deepEqual(path, [
       {
         "expression": {
@@ -92,15 +383,15 @@ suite('graphql#parse-common', function() {
                     },
                     "expression": {
                       "type": "active_position",
-                      "value": "{index}"
+                      "value": "{{$index}}"
                     }
                   },
                   {
                     "expression": {
                       "type": "slice|active",
                       "value": [
-                        "{@length-20}",
-                        "{@length-10}",
+                        "({@length-20})",
+                        "({@length-10})",
                         1
                       ]
                     }
@@ -130,7 +421,7 @@ suite('graphql#parse-common', function() {
   });
 
   test('parse branches of listable SCRIPT_EXPRESSION subscript expressions', function () {
-    var path = jpql.parse("node[123][friends[[1:10],{@length-20},100]]");
+    var path = jpql.parse("node[123][friends[[1:10],({@length-20}),100]]");
     assert.deepEqual(path, [
       {
         "expression": {
@@ -171,13 +462,13 @@ suite('graphql#parse-common', function() {
                     },
                     "expression": {
                       "type": "active_position",
-                      "value": "{index}"
+                      "value": "{{$index}}"
                     }
                   },
                   {
                     "expression": {
                       "type": "script_expression|active",
-                      "value": "{@length-20}"
+                      "value": "({@length-20})"
                     }
                   },
                   {
@@ -205,7 +496,7 @@ suite('graphql#parse-common', function() {
   });
 
   test('parse branches of listable SCRIPT_EXPRESSION subscript expressions containing $ == root$ref', function () {
-    var path = jpql.parse("rules['rule1','rule2',{@$.prefix + $.rule1}]");
+    var path = jpql.parse("rules['rule1','rule2',({@$.prefix + $.rule1})]");
     assert.deepEqual(path, [
       {
         "expression": {
@@ -234,7 +525,7 @@ suite('graphql#parse-common', function() {
             {
               "expression": {
                 "type": "script_expression|active",
-                "value": "{@$.prefix + $.rule1}"
+                "value": "({@$.prefix + $.rule1})"
               }
             }
           ]
@@ -287,7 +578,7 @@ suite('graphql#parse-common', function() {
                     },
                     "expression": {
                       "type": "active_position",
-                      "value": "{index}"
+                      "value": "{{$index}}"
                     }
                   },
                   {
@@ -1076,7 +1367,7 @@ suite('graphql#parse-common', function() {
               },
               "expression": {
                 "type": "active_position",
-                "value": "{index}"
+                "value": "{{$index}}"
               }
             },
             {
@@ -1114,7 +1405,7 @@ suite('graphql#parse-common', function() {
               },
               "expression": {
                 "type": "active_position",
-                "value": "{index}"
+                "value": "{{$index}}"
               }
             }
           ]
@@ -1162,7 +1453,7 @@ suite('graphql#parse-common', function() {
               },
               "expression": {
                 "type": "active_position",
-                "value": "{index}"
+                "value": "{{$index}}"
               }
             },
             {
@@ -1200,7 +1491,7 @@ suite('graphql#parse-common', function() {
               },
               "expression": {
                 "type": "active_position",
-                "value": "{index}"
+                "value": "{{$index}}"
               }
             }
           ]
