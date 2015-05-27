@@ -139,7 +139,7 @@ suite('extended-jsonpath#parse', function() {
   });
 
   test('parse slices with SCRIPT_EXPRESSION to declaritive define a slice in terms of array size :: should parse slice with subscripts as SCRIPT_EXPRESSION', function () {
-    var path = jgp.parse("genereLists[{@.length-20}:{@.length-20}].name");
+    var path = jgp.parse("genereLists[({@.length-20}):({@.length-20})].name");
     assert.deepEqual(path, [
       {
         "expression": {
@@ -153,8 +153,8 @@ suite('extended-jsonpath#parse', function() {
         "expression": {
           "type": "slice|active",
           "value": [
-            "{@.length-20}",
-            "{@.length-20}",
+            "({@.length-20})",
+            "({@.length-20})",
             1
           ]
         },
@@ -574,7 +574,7 @@ suite('extended-jsonpath#parse', function() {
   });
 
   test('parse nested subscript expression with leading active expression (active-array-slice)', function () {
-    var path = jgp.parse("genereLists[{@.length-5}:{@.length-1}[name,rating]]");
+    var path = jgp.parse("genereLists[({@.length-5}):({@.length-1})[name,rating]]");
     assert.deepEqual(path, [
       {
         "expression": {
@@ -614,8 +614,8 @@ suite('extended-jsonpath#parse', function() {
         "expression": {
           "type": "slice|active",
           "value": [
-            "{@.length-5}",
-            "{@.length-1}",
+            "({@.length-5})",
+            "({@.length-1})",
             1
           ]
         },
@@ -674,7 +674,7 @@ suite('extended-jsonpath#parse', function() {
   });
 
   test('parse nested subscript expression with leading active expression (active-script-expression)', function () {
-    var path = jgp.parse("genereLists[{$.byRating[-1]}[name,rating]]");
+    var path = jgp.parse("genereLists[({$.byRating[-1]})[name,rating]]");
     assert.deepEqual(path, [
       {
         "expression": {
@@ -713,7 +713,7 @@ suite('extended-jsonpath#parse', function() {
         },
         "expression": {
           "type": "script_expression|active",
-          "value": "{$.byRating[-1]}"
+          "value": "({$.byRating[-1]})"
         },
         "operation": "subscript",
         "scope": "child"
@@ -1000,7 +1000,7 @@ suite('extended-jsonpath#parse', function() {
               },
               "expression": {
                 "type": "active_position",
-                "value": "{index}"
+                "value": "{{$index}}"
               }
             },
             {
@@ -1040,7 +1040,7 @@ suite('extended-jsonpath#parse', function() {
               },
               "expression": {
                 "type": "active_position",
-                "value": "{index}"
+                "value": "{{$index}}"
               }
             }
           ]
@@ -1173,7 +1173,7 @@ suite('extended-jsonpath#parse', function() {
               },
               "expression": {
                 "type": "active_position",
-                "value": "{index}"
+                "value": "{{$index}}"
               }
             },
             {
@@ -1205,7 +1205,7 @@ suite('extended-jsonpath#parse', function() {
               },
               "expression": {
                 "type": "active_position",
-                "value": "{index}"
+                "value": "{{$index}}"
               }
             },
             {
@@ -1224,7 +1224,7 @@ suite('extended-jsonpath#parse', function() {
               },
               "expression": {
                 "type": "active_position",
-                "value": "{index}"
+                "value": "{{$index}}"
               }
             }
           ]
