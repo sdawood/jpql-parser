@@ -1511,37 +1511,503 @@ test('parse list of single nested subscript component with leading nested path c
 
   test('[X] all books [author,title] via list of subscript expression with first level STAR expression', function() {
     var results = jpql.parse('$..book[*.title,*.price]');
-    assert.deepEqual(results, [false]);
+    assert.deepEqual(results, [
+      {
+        "expression": {
+          "type": "root",
+          "value": "$"
+        }
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "book"
+        },
+        "operation": "member",
+        "scope": "descendant"
+      },
+      {
+        "expression": {
+          "type": "union",
+          "value": [
+            {
+              "branch": {
+                "path": [
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "title"
+                    },
+                    "operation": "member",
+                    "scope": "child|branch"
+                  }
+                ],
+                "scope": "branch"
+              },
+              "expression": {
+                "type": "wildcard",
+                "value": "*"
+              }
+            },
+            {
+              "branch": {
+                "path": [
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "price"
+                    },
+                    "operation": "member",
+                    "scope": "child|branch"
+                  }
+                ],
+                "scope": "branch"
+              },
+              "expression": {
+                "type": "wildcard",
+                "value": "*"
+              }
+            }
+          ]
+        },
+        "operation": "subscript",
+        "scope": "child"
+      }
+    ]);
   });
 
   test('[X] all books [author,title] via list of subscript expression with first level filter expression', function() {
     var results = jpql.parse('$..book[?(@.isbn).title,?(@.isbn).price]');
-    assert.deepEqual(results, [false]);
+    assert.deepEqual(results, [
+      {
+        "expression": {
+          "type": "root",
+          "value": "$"
+        }
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "book"
+        },
+        "operation": "member",
+        "scope": "descendant"
+      },
+      {
+        "expression": {
+          "type": "union",
+          "value": [
+            {
+              "branch": {
+                "path": [
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "title"
+                    },
+                    "operation": "member",
+                    "scope": "child|branch"
+                  }
+                ],
+                "scope": "branch"
+              },
+              "expression": {
+                "type": "filter_expression",
+                "value": "?(@.isbn)"
+              }
+            },
+            {
+              "branch": {
+                "path": [
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "price"
+                    },
+                    "operation": "member",
+                    "scope": "child|branch"
+                  }
+                ],
+                "scope": "branch"
+              },
+              "expression": {
+                "type": "filter_expression",
+                "value": "?(@.isbn)"
+              }
+            }
+          ]
+        },
+        "operation": "subscript",
+        "scope": "child"
+      }
+    ]);
   });
 
   test('[X] all books [author,title] via list of subscript expression with first level slice expression', function() {
     var results = jpql.parse('$..book[1:2.title,3:4.price]');
-    assert.deepEqual(results, [false]);
+    assert.deepEqual(results, [
+      {
+        "expression": {
+          "type": "root",
+          "value": "$"
+        }
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "book"
+        },
+        "operation": "member",
+        "scope": "descendant"
+      },
+      {
+        "expression": {
+          "type": "union",
+          "value": [
+            {
+              "branch": {
+                "path": [
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "title"
+                    },
+                    "operation": "member",
+                    "scope": "child|branch"
+                  }
+                ],
+                "scope": "branch"
+              },
+              "expression": {
+                "type": "slice",
+                "value": "1:2"
+              }
+            },
+            {
+              "branch": {
+                "path": [
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "price"
+                    },
+                    "operation": "member",
+                    "scope": "child|branch"
+                  }
+                ],
+                "scope": "branch"
+              },
+              "expression": {
+                "type": "slice",
+                "value": "3:4"
+              }
+            }
+          ]
+        },
+        "operation": "subscript",
+        "scope": "child"
+      }
+    ]);
   });
 
   test('[X] all books [author,title] via list of subscript expression with first level active slice expression', function() {
     var results = jpql.parse('$..book[({@.length-3}):({@.length-2}).title,({@.length-2}):({@.length-1}).title.price]');
-    assert.deepEqual(results, [false]);
+    assert.deepEqual(results, [
+      {
+        "expression": {
+          "type": "root",
+          "value": "$"
+        }
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "book"
+        },
+        "operation": "member",
+        "scope": "descendant"
+      },
+      {
+        "expression": {
+          "type": "union",
+          "value": [
+            {
+              "branch": {
+                "path": [
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "title"
+                    },
+                    "operation": "member",
+                    "scope": "child|branch"
+                  }
+                ],
+                "scope": "branch"
+              },
+              "expression": {
+                "type": "slice|active",
+                "value": [
+                  "({@.length-3})",
+                  "({@.length-2})",
+                  1
+                ]
+              }
+            },
+            {
+              "branch": {
+                "path": [
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "title"
+                    },
+                    "operation": "member",
+                    "scope": "child|branch"
+                  },
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "price"
+                    },
+                    "operation": "member",
+                    "scope": "child|branch"
+                  }
+                ],
+                "scope": "branch"
+              },
+              "expression": {
+                "type": "slice|active",
+                "value": [
+                  "({@.length-2})",
+                  "({@.length-1})",
+                  1
+                ]
+              }
+            }
+          ]
+        },
+        "operation": "subscript",
+        "scope": "child"
+      }
+    ]);
   });
 
   test('[X] all books [author,title] via list of subscript expression with first level script expression', function() {
     var results = jpql.parse('$..book[(@.length-2).title,(@.length-1).price]');
-    assert.deepEqual(results, [false]);
+    assert.deepEqual(results, [
+      {
+        "expression": {
+          "type": "root",
+          "value": "$"
+        }
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "book"
+        },
+        "operation": "member",
+        "scope": "descendant"
+      },
+      {
+        "expression": {
+          "type": "union",
+          "value": [
+            {
+              "branch": {
+                "path": [
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "title"
+                    },
+                    "operation": "member",
+                    "scope": "child|branch"
+                  }
+                ],
+                "scope": "branch"
+              },
+              "expression": {
+                "type": "script_expression",
+                "value": "(@.length-2)"
+              }
+            },
+            {
+              "branch": {
+                "path": [
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "price"
+                    },
+                    "operation": "member",
+                    "scope": "child|branch"
+                  }
+                ],
+                "scope": "branch"
+              },
+              "expression": {
+                "type": "script_expression",
+                "value": "(@.length-1)"
+              }
+            }
+          ]
+        },
+        "operation": "subscript",
+        "scope": "child"
+      }
+    ]);
   });
 
   test('[X] all books [author,title] via list of subscript expression with first level active script expression', function() {
     var results = jpql.parse('$..book[({@.length-2}).title,({@.length-1}).price]');
-    assert.deepEqual(results, [false]);
+    assert.deepEqual(results, [
+      {
+        "expression": {
+          "type": "root",
+          "value": "$"
+        }
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "book"
+        },
+        "operation": "member",
+        "scope": "descendant"
+      },
+      {
+        "expression": {
+          "type": "union",
+          "value": [
+            {
+              "branch": {
+                "path": [
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "title"
+                    },
+                    "operation": "member",
+                    "scope": "child|branch"
+                  }
+                ],
+                "scope": "branch"
+              },
+              "expression": {
+                "type": "script_expression|active",
+                "value": "({@.length-2})"
+              }
+            },
+            {
+              "branch": {
+                "path": [
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "price"
+                    },
+                    "operation": "member",
+                    "scope": "child|branch"
+                  }
+                ],
+                "scope": "branch"
+              },
+              "expression": {
+                "type": "script_expression|active",
+                "value": "({@.length-1})"
+              }
+            }
+          ]
+        },
+        "operation": "subscript",
+        "scope": "child"
+      }
+    ]);
   });
 
   test('[X] all books [author,title] via list of subscript expression with first level $root back reference expression', function() {
     var results = jpql.parse('$..book[$.0.title,$.1.price]');
-    assert.deepEqual(results, [false]);
+    assert.deepEqual(results, [
+      {
+        "expression": {
+          "type": "root",
+          "value": "$"
+        }
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "book"
+        },
+        "operation": "member",
+        "scope": "descendant"
+      },
+      {
+        "expression": {
+          "type": "union",
+          "value": [
+            {
+              "branch": {
+                "path": [
+                  {
+                    "expression": {
+                      "type": "numeric_literal",
+                      "value": 0
+                    },
+                    "operation": "member",
+                    "scope": "child|branch"
+                  },
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "title"
+                    },
+                    "operation": "member",
+                    "scope": "child|branch"
+                  }
+                ],
+                "scope": "branch"
+              },
+              "expression": {
+                "type": "root",
+                "value": "$$"
+              }
+            },
+            {
+              "branch": {
+                "path": [
+                  {
+                    "expression": {
+                      "type": "numeric_literal",
+                      "value": 1
+                    },
+                    "operation": "member",
+                    "scope": "child|branch"
+                  },
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "price"
+                    },
+                    "operation": "member",
+                    "scope": "child|branch"
+                  }
+                ],
+                "scope": "branch"
+              },
+              "expression": {
+                "type": "root",
+                "value": "$$"
+              }
+            }
+          ]
+        },
+        "operation": "subscript",
+        "scope": "child"
+      }
+    ]);
   });
 
   test('[X] all books [author,title] via list of subscript expression with first level call expression -> active position anchor', function() {
@@ -1556,7 +2022,50 @@ test('parse list of single nested subscript component with leading nested path c
 
   test('[X] just a member followed by a script expression, while implementation can produce the same result, the parser does not consider this a call expression, not to be confused with book(take: 2)', function() {
     var results = jpql.parse('$..book.take.(2).title'); //subscript style call
-    assert.deepEqual(results, [false]);
+    assert.deepEqual(results, [
+      {
+        "expression": {
+          "type": "root",
+          "value": "$"
+        }
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "book"
+        },
+        "operation": "member",
+        "scope": "descendant"
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "take"
+        },
+        "operation": "member",
+        "scope": "child"
+      },
+      {
+        "expression": {
+          "type": "script_expression",
+          "value": "(2)"
+        },
+        "operation": "member",
+        "scope": "child"
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "title"
+        },
+        "operation": "member",
+        "scope": "child"
+      }
+    ]);
+  });
+
+  test('[negative] script expression is cannot switch places with a call expression', function() {
+    assert.throws(function(){jpql.parse('$..book.take(2).title')}); //subscript style call
   });
 
   test('[X] descendant call expression', function() {
@@ -1564,14 +2073,116 @@ test('parse list of single nested subscript component with leading nested path c
     assert.deepEqual(results, [false]);
   });
 
-  test('[X] member call expression', function() {
-    var results = jpql.parse('$.store.book.(take: 2).title'); //member style call
-    assert.deepEqual(results, [false]);
+  test('[X] member call expression throws', function() {
+    assert.throws(function(){jpql.parse('$.store.book.(take: 2).title')}); //member style calls are meaningless
   });
 
-  test('[X] active script expressions listables are member expressions too', function() {
+  test('[X] active script expressions listables are still members :: SCRIPT', function() {
     var results = jpql.parse('$..book.(@.length-1).title');
-    assert.deepEqual(results, [false]);
+    assert.deepEqual(results, [
+      {
+        "expression": {
+          "type": "root",
+          "value": "$"
+        }
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "book"
+        },
+        "operation": "member",
+        "scope": "descendant"
+      },
+      {
+        "expression": {
+          "type": "script_expression",
+          "value": "(@.length-1)"
+        },
+        "operation": "member",
+        "scope": "child"
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "title"
+        },
+        "operation": "member",
+        "scope": "child"
+      }
+    ]);
+  });
+
+  test('[X] active script expressions listables are still members :: STAR', function() {
+    var results = jpql.parse('$..book.*.title');
+    assert.deepEqual(results, [
+      {
+        "expression": {
+          "type": "root",
+          "value": "$"
+        }
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "book"
+        },
+        "operation": "member",
+        "scope": "descendant"
+      },
+      {
+        "expression": {
+          "type": "wildcard",
+          "value": "*"
+        },
+        "operation": "member",
+        "scope": "child"
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "title"
+        },
+        "operation": "member",
+        "scope": "child"
+      }
+    ]);
+  });
+
+  test('[X] active script expressions listables are still members :: ACTIVE_SCRIPT', function() {
+    var results = jpql.parse('$..book.({@.length-1}).title');
+    assert.deepEqual(results, [
+      {
+        "expression": {
+          "type": "root",
+          "value": "$"
+        }
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "book"
+        },
+        "operation": "member",
+        "scope": "descendant"
+      },
+      {
+        "expression": {
+          "type": "script_expression|active",
+          "value": "({@.length-1})"
+        },
+        "operation": "member",
+        "scope": "child"
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "title"
+        },
+        "operation": "member",
+        "scope": "child"
+      }
+    ]);
   });
 
 
