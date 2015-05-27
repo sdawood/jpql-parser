@@ -4,7 +4,7 @@ var jpql = new require('../lib/index')();
 suite('graphql#parse-common', function() {
 
   test('Feature graphqlite npm example', function () {
-    var path = jpql.parse("node(id: 123){id,name,birthdate{month,day}, friends(first: 1){cursor,edges{node{name}}}}");
+    var path = jpql.parse("node(id: 123){id,name,birthdate{month,day}, friends(first: 1){cursor,edges{node{name}}}");
     assert.deepEqual(path, []);
   });
 
