@@ -4,8 +4,296 @@ var jpql = new require('../lib/index')();
 suite('graphql#parse-common', function() {
 
   test('Feature graphqlite npm example', function () {
-    var path = jpql.parse("node(id: 123){id,name,birthdate{month,day}, friends(first: 1){cursor,edges{node{name}}}");
-    assert.deepEqual(path, []);
+    var path = jpql.parse("node(id: 123){id,name,birthdate{month,day}, friends(first: 1){cursor,edges{node{name}}}}");
+    assert.deepEqual(path, [
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "node"
+        },
+        "operation": "member",
+        "scope": "child"
+      },
+      {
+        "expression": {
+          "type": "call_expression",
+          "value": {
+            "params": {
+              "id": "123"
+            }
+          }
+        },
+        "operation": "subscript",
+        "scope": "child"
+      },
+      {
+        "expression": {
+          "type": "union",
+          "value": [
+            {
+              "expression": {
+                "type": "identifier",
+                "value": "id"
+              }
+            },
+            {
+              "expression": {
+                "type": "identifier",
+                "value": "name"
+              }
+            },
+            {
+              "branch": {
+                "path": [
+                  {
+                    "expression": {
+                      "type": "union",
+                      "value": [
+                        {
+                          "expression": {
+                            "type": "identifier",
+                            "value": "month"
+                          }
+                        },
+                        {
+                          "expression": {
+                            "type": "identifier",
+                            "value": "day"
+                          }
+                        }
+                      ]
+                    },
+                    "operation": "subscript",
+                    "scope": "child|branch"
+                  }
+                ],
+                "scope": "branch"
+              },
+              "expression": {
+                "type": "identifier",
+                "value": "birthdate"
+              }
+            },
+            {
+              "branch": {
+                "path": [
+                  {
+                    "expression": {
+                      "type": "call_expression",
+                      "value": {
+                        "params": {
+                          "first": "1"
+                        }
+                      }
+                    },
+                    "operation": "subscript",
+                    "scope": "child|branch"
+                  },
+                  {
+                    "expression": {
+                      "type": "union",
+                      "value": [
+                        {
+                          "expression": {
+                            "type": "identifier",
+                            "value": "cursor"
+                          }
+                        },
+                        {
+                          "branch": {
+                            "path": [
+                              {
+                                "branch": {
+                                  "path": [
+                                    {
+                                      "expression": {
+                                        "type": "identifier",
+                                        "value": "name"
+                                      },
+                                      "operation": "subscript",
+                                      "scope": "child|branch"
+                                    }
+                                  ],
+                                  "scope": "branch"
+                                },
+                                "expression": {
+                                  "type": "identifier",
+                                  "value": "node"
+                                },
+                                "operation": "subscript",
+                                "scope": "child|branch"
+                              }
+                            ],
+                            "scope": "branch"
+                          },
+                          "expression": {
+                            "type": "identifier",
+                            "value": "edges"
+                          }
+                        }
+                      ]
+                    },
+                    "operation": "subscript",
+                    "scope": "child|branch"
+                  }
+                ],
+                "scope": "branch"
+              },
+              "expression": {
+                "type": "identifier",
+                "value": "friends"
+              }
+            }
+          ]
+        },
+        "operation": "subscript",
+        "scope": "child"
+      }
+    ]);
+  });
+
+ test('Feature graphqlite npm example returning union as an Observable', function () {
+    var path = jpql.parse("node(id: 123){id,name,birthdate{month,day}, friends(first: 1).observable{edges{node{name}}}}");
+    assert.deepEqual(path, [
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "node"
+        },
+        "operation": "member",
+        "scope": "child"
+      },
+      {
+        "expression": {
+          "type": "call_expression",
+          "value": {
+            "params": {
+              "id": "123"
+            }
+          }
+        },
+        "operation": "subscript",
+        "scope": "child"
+      },
+      {
+        "expression": {
+          "type": "union",
+          "value": [
+            {
+              "expression": {
+                "type": "identifier",
+                "value": "id"
+              }
+            },
+            {
+              "expression": {
+                "type": "identifier",
+                "value": "name"
+              }
+            },
+            {
+              "branch": {
+                "path": [
+                  {
+                    "expression": {
+                      "type": "union",
+                      "value": [
+                        {
+                          "expression": {
+                            "type": "identifier",
+                            "value": "month"
+                          }
+                        },
+                        {
+                          "expression": {
+                            "type": "identifier",
+                            "value": "day"
+                          }
+                        }
+                      ]
+                    },
+                    "operation": "subscript",
+                    "scope": "child|branch"
+                  }
+                ],
+                "scope": "branch"
+              },
+              "expression": {
+                "type": "identifier",
+                "value": "birthdate"
+              }
+            },
+            {
+              "branch": {
+                "path": [
+                  {
+                    "expression": {
+                      "type": "call_expression",
+                      "value": {
+                        "params": {
+                          "first": "1"
+                        }
+                      }
+                    },
+                    "operation": "subscript",
+                    "scope": "child|branch"
+                  },
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "observable"
+                    },
+                    "operation": "member",
+                    "scope": "child|branch"
+                  },
+                  {
+                    "branch": {
+                      "path": [
+                        {
+                          "branch": {
+                            "path": [
+                              {
+                                "expression": {
+                                  "type": "identifier",
+                                  "value": "name"
+                                },
+                                "operation": "subscript",
+                                "scope": "child|branch"
+                              }
+                            ],
+                            "scope": "branch"
+                          },
+                          "expression": {
+                            "type": "identifier",
+                            "value": "node"
+                          },
+                          "operation": "subscript",
+                          "scope": "child|branch"
+                        }
+                      ],
+                      "scope": "branch"
+                    },
+                    "expression": {
+                      "type": "identifier",
+                      "value": "edges"
+                    },
+                    "operation": "subscript",
+                    "scope": "child|branch"
+                  }
+                ],
+                "scope": "branch"
+              },
+              "expression": {
+                "type": "identifier",
+                "value": "friends"
+              }
+            }
+          ]
+        },
+        "operation": "subscript",
+        "scope": "child"
+      }
+    ]);
   });
 
   test('parse branches of listable subscript expressions with active index with new lines', function () {
