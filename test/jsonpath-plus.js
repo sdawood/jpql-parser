@@ -204,8 +204,7 @@ suite('extended-jsonpath#parse', function() {
               "expression": {
                 "type": "identifier",
                 "value": "x"
-              },
-              "operation": "subscript"
+              }
             },
             {
               "branch": {
@@ -224,8 +223,7 @@ suite('extended-jsonpath#parse', function() {
               "expression": {
                 "type": "identifier",
                 "value": "y"
-              },
-              "operation": "subscript"
+              }
             }
           ]
         },
@@ -294,8 +292,7 @@ suite('extended-jsonpath#parse', function() {
               "expression": {
                 "type": "identifier",
                 "value": "x"
-              },
-              "operation": "subscript"
+              }
             },
             {
               "branch": {
@@ -314,8 +311,7 @@ suite('extended-jsonpath#parse', function() {
               "expression": {
                 "type": "identifier",
                 "value": "y"
-              },
-              "operation": "subscript"
+              }
             }
           ]
         },
@@ -866,8 +862,7 @@ suite('extended-jsonpath#parse', function() {
               "expression": {
                 "type": "filter_expression",
                 "value": "?(@.rating>4)"
-              },
-              "operation": "subscript"
+              }
             },
             {
               "expression": {
@@ -1006,8 +1001,7 @@ suite('extended-jsonpath#parse', function() {
               "expression": {
                 "type": "active_position",
                 "value": "{{$index}}"
-              },
-              "operation": "subscript"
+              }
             },
             {
               "branch": {
@@ -1047,8 +1041,7 @@ suite('extended-jsonpath#parse', function() {
               "expression": {
                 "type": "active_position",
                 "value": "{{$index}}"
-              },
-              "operation": "subscript"
+              }
             }
           ]
         },
@@ -1151,7 +1144,38 @@ suite('extended-jsonpath#parse', function() {
 
   test('[X] parse single subscript expression with leading descendant component expression, descendant reduced into subscript descendant', function () {
     var path = jpql.parse("$..book[0][..profile]");
-    assert.deepEqual(path, [false]);
+    assert.deepEqual(path, [
+      {
+        "expression": {
+          "type": "root",
+          "value": "$"
+        }
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "book"
+        },
+        "operation": "member",
+        "scope": "descendant"
+      },
+      {
+        "expression": {
+          "type": "numeric_literal",
+          "value": 0
+        },
+        "operation": "subscript",
+        "scope": "child"
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "profile"
+        },
+        "operation": "subscript",
+        "scope": "descendant"
+      }
+    ]);
   });
 
   test('[X] parse single subscript expression with leading subscript descendant list with a member component. "$..book[0][..profile]" === "$..book[0]..[profile]"', function () {
@@ -1197,7 +1221,7 @@ suite('extended-jsonpath#parse', function() {
 
   test('[X] simplification-2 parse single subscript expression with "$..book[0]..[profile]" == "$..book[0]..profile"', function () {
     var path = jpql.parse("$..book[0]..[profile]");
-    assert.deepEqual(path, jpql.parse("$..book[0]..profile"));
+    assert.notEqual(path, jpql.parse("$..book[0]..profile"));
   });
 
   test('[X] parse single subscript expression with leading subscript descendant list without branch.', function () {
@@ -1242,12 +1266,12 @@ suite('extended-jsonpath#parse', function() {
   });
 
   test('parse path with leading descendant member expression, retain scope of leading member', function () {
-    var path = jpql.parse("..book.store");
-    assert.edeepEqual(path, [
+    var path = jpql.parse("..store.book");
+    assert.deepEqual(path, [
       {
         "expression": {
           "type": "identifier",
-          "value": "book"
+          "value": "store"
         },
         "operation": "member",
         "scope": "descendant"
@@ -1255,7 +1279,7 @@ suite('extended-jsonpath#parse', function() {
       {
         "expression": {
           "type": "identifier",
-          "value": "store"
+          "value": "book"
         },
         "operation": "member",
         "scope": "child"
@@ -1295,8 +1319,7 @@ suite('extended-jsonpath#parse', function() {
               "expression": {
                 "type": "active_position",
                 "value": "{{$index}}"
-              },
-              "operation": "subscript"
+              }
             },
             {
               "branch": {
@@ -1328,8 +1351,7 @@ suite('extended-jsonpath#parse', function() {
               "expression": {
                 "type": "active_position",
                 "value": "{{$index}}"
-              },
-              "operation": "subscript"
+              }
             },
             {
               "branch": {
@@ -1348,8 +1370,7 @@ suite('extended-jsonpath#parse', function() {
               "expression": {
                 "type": "active_position",
                 "value": "{{$index}}"
-              },
-              "operation": "subscript"
+              }
             }
           ]
         },
@@ -1422,8 +1443,7 @@ suite('extended-jsonpath#parse', function() {
               "expression": {
                 "type": "numeric_literal",
                 "value": 0
-              },
-              "operation": "subscript"
+              }
             },
             {
               "branch": {
@@ -1450,8 +1470,7 @@ suite('extended-jsonpath#parse', function() {
               "expression": {
                 "type": "numeric_literal",
                 "value": 1
-              },
-              "operation": "subscript"
+              }
             },
             {
               "branch": {
@@ -1478,8 +1497,7 @@ suite('extended-jsonpath#parse', function() {
               "expression": {
                 "type": "numeric_literal",
                 "value": 2
-              },
-              "operation": "subscript"
+              }
             },
             {
               "branch": {
@@ -1506,8 +1524,7 @@ suite('extended-jsonpath#parse', function() {
               "expression": {
                 "type": "numeric_literal",
                 "value": 3
-              },
-              "operation": "subscript"
+              }
             }
           ]
         },
@@ -1609,7 +1626,7 @@ test('parse list of single nested subscript component with leading nested path c
                       "type": "identifier",
                       "value": "name"
                     },
-                    "operation": "subscript",
+                    "operation": "member",
                     "scope": "descendant"
                   },
                   {
@@ -1675,8 +1692,7 @@ test('parse list of single nested subscript component with leading nested path c
               "expression": {
                 "type": "wildcard",
                 "value": "*"
-              },
-              "operation": "subscript"
+              }
             },
             {
               "branch": {
@@ -1695,8 +1711,7 @@ test('parse list of single nested subscript component with leading nested path c
               "expression": {
                 "type": "wildcard",
                 "value": "*"
-              },
-              "operation": "subscript"
+              }
             }
           ]
         },
@@ -1744,8 +1759,7 @@ test('parse list of single nested subscript component with leading nested path c
               "expression": {
                 "type": "filter_expression",
                 "value": "?(@.isbn)"
-              },
-              "operation": "subscript"
+              }
             },
             {
               "branch": {
@@ -1764,8 +1778,7 @@ test('parse list of single nested subscript component with leading nested path c
               "expression": {
                 "type": "filter_expression",
                 "value": "?(@.isbn)"
-              },
-              "operation": "subscript"
+              }
             }
           ]
         },
@@ -1813,8 +1826,7 @@ test('parse list of single nested subscript component with leading nested path c
               "expression": {
                 "type": "slice",
                 "value": "1:2"
-              },
-              "operation": "subscript"
+              }
             },
             {
               "branch": {
@@ -1833,8 +1845,7 @@ test('parse list of single nested subscript component with leading nested path c
               "expression": {
                 "type": "slice",
                 "value": "3:4"
-              },
-              "operation": "subscript"
+              }
             }
           ]
         },
@@ -1886,8 +1897,7 @@ test('parse list of single nested subscript component with leading nested path c
                   "({@.length-2})",
                   1
                 ]
-              },
-              "operation": "subscript"
+              }
             },
             {
               "branch": {
@@ -1918,8 +1928,7 @@ test('parse list of single nested subscript component with leading nested path c
                   "({@.length-1})",
                   1
                 ]
-              },
-              "operation": "subscript"
+              }
             }
           ]
         },
@@ -1967,8 +1976,7 @@ test('parse list of single nested subscript component with leading nested path c
               "expression": {
                 "type": "script_expression",
                 "value": "(@.length-2)"
-              },
-              "operation": "subscript"
+              }
             },
             {
               "branch": {
@@ -1987,8 +1995,7 @@ test('parse list of single nested subscript component with leading nested path c
               "expression": {
                 "type": "script_expression",
                 "value": "(@.length-1)"
-              },
-              "operation": "subscript"
+              }
             }
           ]
         },
@@ -2036,8 +2043,7 @@ test('parse list of single nested subscript component with leading nested path c
               "expression": {
                 "type": "script_expression|active",
                 "value": "({@.length-2})"
-              },
-              "operation": "subscript"
+              }
             },
             {
               "branch": {
@@ -2056,8 +2062,7 @@ test('parse list of single nested subscript component with leading nested path c
               "expression": {
                 "type": "script_expression|active",
                 "value": "({@.length-1})"
-              },
-              "operation": "subscript"
+              }
             }
           ]
         },
@@ -2113,8 +2118,7 @@ test('parse list of single nested subscript component with leading nested path c
               "expression": {
                 "type": "root",
                 "value": "$$"
-              },
-              "operation": "subscript"
+              }
             },
             {
               "branch": {
@@ -2141,8 +2145,7 @@ test('parse list of single nested subscript component with leading nested path c
               "expression": {
                 "type": "root",
                 "value": "$$"
-              },
-              "operation": "subscript"
+              }
             }
           ]
         },
@@ -2202,8 +2205,7 @@ test('parse list of single nested subscript component with leading nested path c
               "expression": {
                 "type": "active_position",
                 "value": "{{$index}}"
-              },
-              "operation": "subscript"
+              }
             },
             {
               "branch": {
@@ -2234,8 +2236,7 @@ test('parse list of single nested subscript component with leading nested path c
               "expression": {
                 "type": "active_position",
                 "value": "{{$index}}"
-              },
-              "operation": "subscript"
+              }
             }
           ]
         },
@@ -2295,8 +2296,7 @@ test('parse list of single nested subscript component with leading nested path c
               "expression": {
                 "type": "active_position",
                 "value": "{{$index}}"
-              },
-              "operation": "subscript"
+              }
             },
             {
               "branch": {
@@ -2327,8 +2327,7 @@ test('parse list of single nested subscript component with leading nested path c
               "expression": {
                 "type": "active_position",
                 "value": "{{$index}}"
-              },
-              "operation": "subscript"
+              }
             }
           ]
         },
@@ -2376,8 +2375,7 @@ test('parse list of single nested subscript component with leading nested path c
               "expression": {
                 "type": "script_expression",
                 "value": "( delay: 100)"
-              },
-              "operation": "subscript"
+              }
             },
             {
               "branch": {
@@ -2396,8 +2394,7 @@ test('parse list of single nested subscript component with leading nested path c
               "expression": {
                 "type": "script_expression",
                 "value": "( delay: 100 )"
-              },
-              "operation": "subscript"
+              }
             }
           ]
         },
