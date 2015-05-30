@@ -172,73 +172,73 @@ suite('extended-jsonpath#parse', function() {
     ]);
   });
 
-  test('parse nested single path component after leading expressoin :: ', function () {
+  test('parse nested single path component after leading expression', function () {
     var path = jpql.parse("genereLists[x.name,y.name].name");
     assert.deepEqual(path, [
-        {
-          "expression": {
-            "type": "identifier",
-            "value": "genereLists"
-          },
-          "operation": "member",
-          "scope": "child"
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "genereLists"
         },
-        {
-          "expression": {
-            "type": "union",
-            "value": [
-              {
-                "branch": {
-                  "path": [
-                    {
-                      "expression": {
-                        "type": "identifier",
-                        "value": "name"
-                      },
-                      "operation": "member",
-                      "scope": "child|branch"
-                    }
-                  ],
-                  "scope": "branch"
-                },
-                "expression": {
-                  "type": "identifier",
-                  "value": "x"
-                }
+        "operation": "member",
+        "scope": "child"
+      },
+      {
+        "expression": {
+          "type": "union",
+          "value": [
+            {
+              "branch": {
+                "path": [
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "name"
+                    },
+                    "operation": "member",
+                    "scope": "child|branch"
+                  }
+                ],
+                "scope": "branch"
               },
-              {
-                "branch": {
-                  "path": [
-                    {
-                      "expression": {
-                        "type": "identifier",
-                        "value": "name"
-                      },
-                      "operation": "member",
-                      "scope": "child|branch"
-                    }
-                  ],
-                  "scope": "branch"
-                },
-                "expression": {
-                  "type": "identifier",
-                  "value": "y"
-                }
+              "expression": {
+                "type": "identifier",
+                "value": "x"
               }
-            ]
-          },
-          "operation": "subscript",
-          "scope": "child"
+            },
+            {
+              "branch": {
+                "path": [
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "name"
+                    },
+                    "operation": "member",
+                    "scope": "child|branch"
+                  }
+                ],
+                "scope": "branch"
+              },
+              "expression": {
+                "type": "identifier",
+                "value": "y"
+              }
+            }
+          ]
         },
-        {
-          "expression": {
-            "type": "identifier",
-            "value": "name"
-          },
-          "operation": "member",
-          "scope": "child"
-        }
-      ]);
+        "operation": "subscript",
+        "scope": "child"
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "name"
+        },
+        "operation": "member",
+        "scope": "child"
+      }
+    ]);
   });
 
   test('parser allows the use of $ inside path is parsed as "$$" root member child expression, which is equivalent to root$ref, references the child\'s root node, wherever the child is', function () {
@@ -1051,7 +1051,7 @@ suite('extended-jsonpath#parse', function() {
     ]);
   });
 
-  test('parse nested subscript expression with leading descendant component expression', function () {
+  test('[X] parse nested subscript expression with leading descendant component expression, subscript reduced into subscript-union', function () {
     var path = jpql.parse("genereLists[..action[name,rating],..comedy[name,rating]]");
     assert.deepEqual(path, [
       {
@@ -1137,6 +1137,151 @@ suite('extended-jsonpath#parse', function() {
           ]
         },
         "operation": "subscript",
+        "scope": "child"
+      }
+    ]);
+  });
+
+  test('[X] parse single subscript expression with leading descendant component expression, descendant reduced into subscript descendant', function () {
+    var path = jpql.parse("$..book[0][..profile]");
+    assert.deepEqual(path, [
+      {
+        "expression": {
+          "type": "root",
+          "value": "$"
+        }
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "book"
+        },
+        "operation": "member",
+        "scope": "descendant"
+      },
+      {
+        "expression": {
+          "type": "numeric_literal",
+          "value": 0
+        },
+        "operation": "subscript",
+        "scope": "child"
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "profile"
+        },
+        "operation": "subscript",
+        "scope": "descendant"
+      }
+    ]);
+  });
+
+  test('[X] parse single subscript expression with leading subscript descendant list with a member component. "$..book[0][..profile]" === "$..book[0]..[profile]"', function () {
+    var path = jpql.parse("$..book[0]..[profile]");
+    assert.deepEqual(path, jpql.parse("$..book[0][..profile]"));
+  });
+
+  test('[X] simplification-1: parse single subscript expression with "$..book[0][..profile]" === "$..book[0]..[profile]"', function () {
+    var path = jpql.parse("$..book[0]..[profile]");
+    assert.deepEqual(path, [
+      {
+        "expression": {
+          "type": "root",
+          "value": "$"
+        }
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "book"
+        },
+        "operation": "member",
+        "scope": "descendant"
+      },
+      {
+        "expression": {
+          "type": "numeric_literal",
+          "value": 0
+        },
+        "operation": "subscript",
+        "scope": "child"
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "profile"
+        },
+        "operation": "subscript",
+        "scope": "descendant"
+      }
+    ]);
+  });
+
+  test('[X] simplification-2 parse single subscript expression with "$..book[0]..[profile]" == "$..book[0]..profile"', function () {
+    var path = jpql.parse("$..book[0]..[profile]");
+    assert.notEqual(path, jpql.parse("$..book[0]..profile"));
+  });
+
+  test('[X] parse single subscript expression with leading subscript descendant list without branch.', function () {
+    var path = jpql.parse("$..book[..[name]]");
+    assert.deepEqual(path, [
+      {
+        "expression": {
+          "type": "root",
+          "value": "$"
+        }
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "book"
+        },
+        "operation": "member",
+        "scope": "descendant"
+      },
+      {
+        "branch": {
+          "path": [
+            {
+              "expression": {
+                "type": "identifier",
+                "value": "name"
+              },
+              "operation": "subscript",
+              "scope": "descendant|branch"
+            }
+          ],
+          "scope": "branch"
+        },
+        "expression": {
+          "type": "active_position",
+          "value": "{{$index}}"
+        },
+        "operation": "subscript",
+        "scope": "child"
+      }
+    ]);
+  });
+
+  test('parse path with leading descendant member expression, retain scope of leading member', function () {
+    var path = jpql.parse("..store.book");
+    assert.deepEqual(path, [
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "store"
+        },
+        "operation": "member",
+        "scope": "descendant"
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "book"
+        },
+        "operation": "member",
         "scope": "child"
       }
     ]);
@@ -2447,7 +2592,7 @@ test('parse list of single nested subscript component with leading nested path c
     ]);
   });
 
-  test('[X] member call expression throws', function() {
+  test('[negative] member call expression throws', function() {
     assert.throws(function(){jpql.parse('$.store.book.(take: 2).title')}); //member style calls are meaningless
   });
 
