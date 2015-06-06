@@ -467,6 +467,14 @@ suite('graphql#parse-common', function() {
                   },
                   {
                     "expression": {
+                      "active": {
+                        "map": {
+                          "script": "{@length-20}",
+                          "value": "({@length-20})"
+                        },
+                        "reduce": {},
+                        "value": "({@length-20})"
+                      },
                       "type": "script_expression|active",
                       "value": "({@length-20})"
                     }
@@ -524,6 +532,14 @@ suite('graphql#parse-common', function() {
             },
             {
               "expression": {
+                "active": {
+                  "map": {
+                    "script": "{@$.prefix + $.rule1}",
+                    "value": "({@$.prefix + $.rule1})"
+                  },
+                  "reduce": {},
+                  "value": "({@$.prefix + $.rule1})"
+                },
                 "type": "script_expression|active",
                 "value": "({@$.prefix + $.rule1})"
               }

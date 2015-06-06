@@ -2687,6 +2687,14 @@ test('parse list of single nested subscript component with leading nested path c
       },
       {
         "expression": {
+          "active": {
+            "map": {
+              "script": "{@.length-1}",
+              "value": "({@.length-1})"
+            },
+            "reduce": {},
+            "value": "({@.length-1})"
+          },
           "type": "script_expression|active",
           "value": "({@.length-1})"
         },
