@@ -241,7 +241,7 @@ suite('extended-jsonpath#parse', function() {
     ]);
   });
 
-  test('parser allows the use of $ inside path is parsed as "$$" root member child expression, which is equivalent to root$ref, references the child\'s root node, wherever the child is', function () {
+  test('parser allows the use of $ inside path is parsed as "$" root member child expression, which is equivalent to root$ref, references the child\'s root node, wherever the child is', function () {
     var path = jpql.parse("genereLists[$.server,x.name,y.name].name");
     assert.deepEqual(path, [
       {
@@ -272,7 +272,7 @@ suite('extended-jsonpath#parse', function() {
               },
               "expression": {
                 "type": "root",
-                "value": "$$"
+                "value": "$"
               }
             },
             {
@@ -885,7 +885,7 @@ suite('extended-jsonpath#parse', function() {
   });
 
   test('parse nested subscript expression with leading active expression ($)', function () {
-    var path = jpql.parse("genereLists[*][$[name,rating]]"); //$$ references child root node, this specific simple case is equivalent to genereLists[*][name,rating]
+    var path = jpql.parse("genereLists[*][$[name,rating]]"); //$ references child root node, this specific simple case is equivalent to genereLists[*][name,rating]
     assert.deepEqual(path, [
       {
         "expression": {
@@ -932,7 +932,7 @@ suite('extended-jsonpath#parse', function() {
         },
         "expression": {
           "type": "root",
-          "value": "$$"
+          "value": "$"
         },
         "operation": "subscript",
         "scope": "child"
@@ -2117,7 +2117,7 @@ test('parse list of single nested subscript component with leading nested path c
               },
               "expression": {
                 "type": "root",
-                "value": "$$"
+                "value": "$"
               }
             },
             {
@@ -2144,7 +2144,7 @@ test('parse list of single nested subscript component with leading nested path c
               },
               "expression": {
                 "type": "root",
-                "value": "$$"
+                "value": "$"
               }
             }
           ]
