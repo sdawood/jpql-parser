@@ -162,13 +162,28 @@ suite('jsonpath#active-script-operations', function() {
     assert.deepEqual(results, [false]);
   });
 
-  test('parse mapping script, mergeAll (value or default) scenario, implementation chose to bind the script this reference to the partial instead of using "@', function() {
-    var results = jpql.parse('$..book.[fullName, ?(this.fulleName===null).(=>{"Not Available"})]');
+  test('parse mapping script, mergeAll (value or default if value is null or key does not exist) scenario, implementation chose to bind the script this reference to the partial instead of using "@', function() {
+    var results = jpql.parse('$..book[fullName, ?(this.fulleName===null).(=>{"Not Available"})]');
+    assert.deepEqual(results, [false]);
+  });
+
+ test('parse mapping script, for this key return that value, wheather key has to exist in the data source, Mocking and Defaults', function() {
+    var results = jpql.parse('$..book.reviews.({details}:=>{"Temporary Not Available"})]');
     assert.deepEqual(results, [false]);
   });
 
  test('parse mapping script, mergeAll value or default scenario, implementation chose to bind the script this reference to the partial instead of using "@', function() {
-    var results = jpql.parse('$..book.[fullName, (=>{@.fullName ? undefined : "Not Available"})]');
+    var results = jpql.parse('$..book[fullName, (=>{@.fullName ? undefined : "Not Available"})]');
+    assert.deepEqual(results, [false]);
+  });
+
+  test('parse active script operation call receiving literal arguments', function() {
+    var results = jpql.parse('$.store.book.(=>{push}:{ {"4": {title: "New Book"} } })');
+    assert.deepEqual(results, [false]);
+  });
+
+  test('parse active script operation call receiving computed argument', function() {
+    var results = jpql.parse('$.store.(=>{decrement}:#{$..book.onOffer[@.length-1]})');
     assert.deepEqual(results, [false]);
   });
 
