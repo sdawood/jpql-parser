@@ -342,7 +342,7 @@ suite('graphql#parse-common', function() {
   });
 
   test('parse branches of listable ACTIVE_SLICE subscript expressions with curvey {} subscripts', function () {
-    var path = jpql.parse("node{123}{friends{{1:10},({@length-20}):({@length-10}),100}}");
+    var path = jpql.parse("node{123}{friends{{1:10},(@length-20):(@length-10),100}}");
     assert.deepEqual(path, [
       {
         "expression": {
@@ -390,8 +390,8 @@ suite('graphql#parse-common', function() {
                     "expression": {
                       "type": "slice|active",
                       "value": [
-                        "({@length-20})",
-                        "({@length-10})",
+                        "(@length-20)",
+                        "(@length-10)",
                         1
                       ]
                     }
