@@ -2668,7 +2668,7 @@ test('parse list of single nested subscript component with leading nested path c
     ]);
   });
 
-  test('[X] active script expressions listables are still members :: ACTIVE_SCRIPT', function() {
+  test('active script expressions listables are still members :: ACTIVE_SCRIPT', function() {
     var results = jpql.parse('$..book.({@.length-1}).title');
     assert.deepEqual(results, [
       {
@@ -2703,6 +2703,4 @@ test('parse list of single nested subscript component with leading nested path c
       }
     ]);
   });
-
-
 });
