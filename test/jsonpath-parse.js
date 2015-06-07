@@ -166,7 +166,7 @@ suite('jsonpath#parse-negative', function() {
   });
 
   test('leading script throws', function() {
-    assert.throws(function() { var path = jp.parse('()') })
+    assert.doesNotThrow(function() { var path = jp.parse('()') })
   });
 
   test('parser ast is reinitialized after parse() throws', function() {

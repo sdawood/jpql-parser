@@ -86,7 +86,7 @@ suite('extended-jsonpath#parse', function() {
 suite('extended-jsonpath#parse-negative', function() {
 
   test('leading script throws', function() {
-    assert.throws(function() { var path = jpql.parse('()') })
+    assert.doesNotThrow(function() { var path = jpql.parse('()') })
   });
 
 

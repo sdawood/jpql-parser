@@ -169,7 +169,7 @@ suite('jsonpath#active-script-operations', function() {
   });
 
   test('[4] [async] active script expression operations with take(n) splat results behavior (#(n)*{}), default is GET', function() {
-    var results = jpql.parse('$..book[(#(2)*{[@.length-1,@.length-2]}).title]');
+    var results = jpql.parse('$..book[(@(2)*{[@.length-1,@.length-2]}).title]');
     assert.deepEqual(results, [
       {
         "expression": {
@@ -202,14 +202,14 @@ suite('jsonpath#active-script-operations', function() {
         "expression": {
           "active": {
             "map": {
-              "async": "#",
+              "async": "@",
               "operation": "*",
               "script": "{[@.length-1,@.length-2]}",
               "take": "2",
-              "value": "(#(2)*{[@.length-1,@.length-2]})"
+              "value": "(@(2)*{[@.length-1,@.length-2]})"
             },
             "reduce": {},
-            "value": "(#(2)*{[@.length-1,@.length-2]})"
+            "value": "(@(2)*{[@.length-1,@.length-2]})"
           },
           "type": "script_expression|active",
           "value": "({[@.length-1,@.length-2]})"
@@ -414,8 +414,59 @@ suite('jsonpath#active-script-operations', function() {
     ]);
   });
 
- test('[9] [async computed nested $ path result] active script expression operations with computed nested path argument with reference to true root (+{}:=#{ $ }), add "+" (POST), implementation should concat or push value to existing array if any, warn or err about overwriting existing value literal, and return merged sources', function() {
-    var results = jpql.parse('$..book[?(@.fulleName===null)].(+{fullName}):(#={' +
+  test('[8-1] [merge computed active script argument] active script expression operations with computed active script argument  (&{}):(={ @ }), merge "&" (PUT), implementation should merge {key: value} into partial, warn or err about overwriting existing value literal, and return merged sources', function() {
+    var results = jpql.parse('$..book[?(@.fulleName===null)].(&{fullName}):(={' +
+      '@.firstName + " " + @.lastName' +
+      '})');
+    assert.deepEqual(results, [
+      {
+        "expression": {
+          "type": "root",
+          "value": "$"
+        }
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "book"
+        },
+        "operation": "member",
+        "scope": "descendant"
+      },
+      {
+        "expression": {
+          "type": "filter_expression",
+          "value": "?(@.fulleName===null)"
+        },
+        "operation": "subscript",
+        "scope": "child"
+      },
+      {
+        "expression": {
+          "active": {
+            "map": {
+              "operation": "&",
+              "script": "{fullName}",
+              "value": "(&{fullName})"
+            },
+            "reduce": {
+              "operation": "=",
+              "script": "{@.firstName + \" \" + @.lastName}",
+              "value": "(={@.firstName + \" \" + @.lastName})"
+            },
+            "value": "(&{fullName}):(={@.firstName + \" \" + @.lastName})"
+          },
+          "type": "script_expression|active",
+          "value": "({fullName})"
+        },
+        "operation": "member",
+        "scope": "child"
+      }
+    ]);
+  });
+
+ test('[9] [async computed nested $ path result] active script expression operations with computed nested path argument with reference to true root (+{}:@={ $ }), add "+" (POST), implementation should concat or push value to existing array if any, warn or err about overwriting existing value literal, and return merged sources', function() {
+    var results = jpql.parse('$..book[?(@.fulleName===null)].(+{fullName}):(@={' +
       '$..book[?(@.fulleName===null)][firstName, lastName]' +
       '})');
     assert.deepEqual(results, [
@@ -450,12 +501,12 @@ suite('jsonpath#active-script-operations', function() {
               "value": "(+{fullName})"
             },
             "reduce": {
-              "async": "#",
+              "async": "@",
               "operation": "=",
               "script": "{$..book[?(@.fulleName===null)][firstName, lastName]}",
-              "value": "(#={$..book[?(@.fulleName===null)][firstName, lastName]})"
+              "value": "(@={$..book[?(@.fulleName===null)][firstName, lastName]})"
             },
-            "value": "(+{fullName}):(#={$..book[?(@.fulleName===null)][firstName, lastName]})"
+            "value": "(+{fullName}):(@={$..book[?(@.fulleName===null)][firstName, lastName]})"
           },
           "type": "script_expression|active",
           "value": "({fullName})"
@@ -466,8 +517,8 @@ suite('jsonpath#active-script-operations', function() {
     ]);
   });
 
- test('[10] [async subscribe to nested @$ path result] active script expression operations with computed nested path argument with reference to script context "@$" (+{}):(=#{ @$ }), add "+" (POST), implementation should concat or push value to existing array if any, warn or err about overwriting existing value literal, and return merged sources', function() {
-    var results = jpql.parse('$..book[?(@.fulleName===null)].(+{fullName}):(#(1)={@$[firstName, lastName]})'); // take(1) is the default, can be written as #
+ test('[10] [async subscribe to nested @$ path result] active script expression operations with computed nested path argument with reference to script context "@$" (+{}):(=@{ @$ }), add "+" (POST), implementation should concat or push value to existing array if any, warn or err about overwriting existing value literal, and return merged sources', function() {
+    var results = jpql.parse('$..book[?(@.fulleName===null)].(+{fullName}):(@(1)={@$[firstName, lastName]})');
     assert.deepEqual(results, [
       {
         "expression": {
@@ -500,13 +551,13 @@ suite('jsonpath#active-script-operations', function() {
               "value": "(+{fullName})"
             },
             "reduce": {
-              "async": "#",
+              "async": "@",
               "operation": "=",
               "script": "{@$[firstName, lastName]}",
               "take": "1",
-              "value": "(#(1)={@$[firstName, lastName]})"
+              "value": "(@(1)={@$[firstName, lastName]})"
             },
-            "value": "(+{fullName}):(#(1)={@$[firstName, lastName]})"
+            "value": "(+{fullName}):(@(1)={@$[firstName, lastName]})"
           },
           "type": "script_expression|active",
           "value": "({fullName})"
@@ -566,9 +617,9 @@ suite('jsonpath#active-script-operations', function() {
     ]);
   });
 
- test('[12] [async subscribe to nested path component == active script result] active script expression operations with computed nested active script expression with reference to parent script context value (+{}):(=#{ ({@@}) }), add "+" (POST), implementation should concat or push value to existing array if any, warn or err about overwriting existing value literal, and return merged sources', function() {
-    var results = jpql.parse('$..book[?(@.fulleName===null)].(#tag+{fullName}):(#={' +
-      '@@.firstName + " " + @@.lastName' +
+ test('[12] [async subscribe to nested path component == active script result] active script expression operations with computed nested active script expression with reference to parent script context value (+{}):(@={ ({@@}) }), add "+" (POST), implementation should concat or push value to existing array if any, warn or err about overwriting existing value literal, and return merged sources', function() {
+    var results = jpql.parse('$..book[?(@.fulleName===null)].(#tag+{fullName}):(@={' +
+      '@@.firstName + " " + @@.lastName' + //@@ can be $branch or $node, implementation is free to chose
       '})');
     assert.deepEqual(results, [
       {
@@ -597,19 +648,19 @@ suite('jsonpath#active-script-operations', function() {
         "expression": {
           "active": {
             "map": {
-              "async": "#",
+              "label": "tag",
               "operation": "+",
               "script": "{fullName}",
-              "tag": "tag",
+              "tag": "#",
               "value": "(#tag+{fullName})"
             },
             "reduce": {
-              "async": "#",
+              "async": "@",
               "operation": "=",
               "script": "{@@.firstName + \" \" + @@.lastName}",
-              "value": "(#={@@.firstName + \" \" + @@.lastName})"
+              "value": "(@={@@.firstName + \" \" + @@.lastName})"
             },
-            "value": "(#tag+{fullName}):(#={@@.firstName + \" \" + @@.lastName})"
+            "value": "(#tag+{fullName}):(@={@@.firstName + \" \" + @@.lastName})"
           },
           "type": "script_expression|active",
           "value": "({fullName})"
@@ -620,8 +671,8 @@ suite('jsonpath#active-script-operations', function() {
     ]);
   });
 
- test('[13] [async subscribe to component via active script optation take (10) (#(n){@})', function() {
-    var results = jpql.parse('$..book[?(@.discount)].(#(10){title})');
+ test('[13] [async subscribe to component via active script optation take (10) (@(n){@})', function() {
+    var results = jpql.parse('$..book[?(@.discount)].(@(10){title})');
     assert.deepEqual(results, [
       {
         "expression": {
@@ -649,13 +700,13 @@ suite('jsonpath#active-script-operations', function() {
         "expression": {
           "active": {
             "map": {
-              "async": "#",
+              "async": "@",
               "script": "{title}",
               "take": "10",
-              "value": "(#(10){title})"
+              "value": "(@(10){title})"
             },
             "reduce": {},
-            "value": "(#(10){title})"
+            "value": "(@(10){title})"
           },
           "type": "script_expression|active",
           "value": "({title})"
@@ -965,7 +1016,7 @@ suite('jsonpath#active-script-operations', function() {
   });
 
  test('[23] parse mapping script, for this key return that value, key has to exist in the data source, Mocking and Defaults', function() {
-    var results = jpql.parse('$..book.reviews.(#{details}):(#retry(10)=>{"Temporary Not Available"})');
+    var results = jpql.parse('$..book.reviews.(#{details}):(#retry @(10) => {"Temporary Not Available"})');
     assert.deepEqual(results, [
       {
         "expression": {
@@ -993,19 +1044,20 @@ suite('jsonpath#active-script-operations', function() {
         "expression": {
           "active": {
             "map": {
-              "async": "#",
               "script": "{details}",
+              "tag": "#",
               "value": "(#{details})"
             },
             "reduce": {
-              "async": "#",
+              "async": "@",
+              "label": "retry",
               "operation": "=>",
               "script": "{\"Temporary Not Available\"}",
-              "tag": "retry",
+              "tag": "#",
               "take": "10",
-              "value": "(#retry(10)=>{\"Temporary Not Available\"})"
+              "value": "(#retry @(10) => {\"Temporary Not Available\"})"
             },
-            "value": "(#{details}):(#retry(10)=>{\"Temporary Not Available\"})"
+            "value": "(#{details}):(#retry @(10) => {\"Temporary Not Available\"})"
           },
           "type": "script_expression|active",
           "value": "({details})"
@@ -1140,9 +1192,9 @@ suite('jsonpath#active-script-operations', function() {
               "value": "(=>{decrement})"
             },
             "reduce": {
-              "async": "#",
+              "label": "tagExpired",
               "script": "{$..book.onOffer[@.length-1]}",
-              "tag": "tagExpired",
+              "tag": "#",
               "value": "(#tagExpired{$..book.onOffer[@.length-1]})"
             },
             "value": "(=>{decrement}):(#tagExpired{$..book.onOffer[@.length-1]})"
@@ -1155,6 +1207,184 @@ suite('jsonpath#active-script-operations', function() {
       }
     ]);
   });
+
+  test('[27] regex path component', function() {
+    var results = jpql.parse('$..book.category../^[aA]ction/g');
+    assert.deepEqual(results, [false]);
+  });
+
+  test('[28] tag component for later reference in the path and allowing access to individual sources before they get merged by the union expression', function() {
+    var results = jpql.parse('$..category[comedy.(#comedy), (#action{action})].(@(10))'); // expressions key.(#tag) and (#tag{script returning key}) are interchangeable
+    assert.deepEqual(results, [
+      {
+        "expression": {
+          "type": "root",
+          "value": "$"
+        }
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "category"
+        },
+        "operation": "member",
+        "scope": "descendant"
+      },
+      {
+        "expression": {
+          "type": "union",
+          "value": [
+            {
+              "branch": {
+                "path": [
+                  {
+                    "expression": {
+                      "active": {
+                        "map": {
+                          "label": "comedy",
+                          "tag": "#",
+                          "value": "(#comedy)"
+                        },
+                        "reduce": {},
+                        "value": "(#comedy)"
+                      },
+                      "type": "script_expression|active",
+                      "value": "(undefined)"
+                    },
+                    "operation": "member",
+                    "scope": "child|branch"
+                  }
+                ],
+                "scope": "branch"
+              },
+              "expression": {
+                "type": "identifier",
+                "value": "comedy"
+              }
+            },
+            {
+              "expression": {
+                "active": {
+                  "map": {
+                    "label": "action",
+                    "script": "{action}",
+                    "tag": "#",
+                    "value": "(#action{action})"
+                  },
+                  "reduce": {},
+                  "value": "(#action{action})"
+                },
+                "type": "script_expression|active",
+                "value": "({action})"
+              }
+            }
+          ]
+        },
+        "operation": "subscript",
+        "scope": "child"
+      },
+      {
+        "expression": {
+          "active": {
+            "map": {
+              "async": "@",
+              "take": "10",
+              "value": "(@(10))"
+            },
+            "reduce": {},
+            "value": "(@(10))"
+          },
+          "type": "script_expression|active",
+          "value": "(undefined)"
+        },
+        "operation": "member",
+        "scope": "child"
+      }
+    ]);
+  });
+
+  test('[29] empty tags generate a tag that is a function of the key, path and value. details are left to the implementation.', function() {
+    var results = jpql.parse('$..category[comedy.(#comedy @(10)), (#action @(10) {action})]');
+    assert.deepEqual(results, [
+      {
+        "expression": {
+          "type": "root",
+          "value": "$"
+        }
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "category"
+        },
+        "operation": "member",
+        "scope": "descendant"
+      },
+      {
+        "expression": {
+          "type": "union",
+          "value": [
+            {
+              "branch": {
+                "path": [
+                  {
+                    "expression": {
+                      "active": {
+                        "map": {
+                          "async": "@",
+                          "label": "comedy",
+                          "tag": "#",
+                          "take": "10",
+                          "value": "(#comedy @(10))"
+                        },
+                        "reduce": {},
+                        "value": "(#comedy @(10))"
+                      },
+                      "type": "script_expression|active",
+                      "value": "(undefined)"
+                    },
+                    "operation": "member",
+                    "scope": "child|branch"
+                  }
+                ],
+                "scope": "branch"
+              },
+              "expression": {
+                "type": "identifier",
+                "value": "comedy"
+              }
+            },
+            {
+              "expression": {
+                "active": {
+                  "map": {
+                    "async": "@",
+                    "label": "action",
+                    "script": "{action}",
+                    "tag": "#",
+                    "take": "10",
+                    "value": "(#action @(10) {action})"
+                  },
+                  "reduce": {},
+                  "value": "(#action @(10) {action})"
+                },
+                "type": "script_expression|active",
+                "value": "({action})"
+              }
+            }
+          ]
+        },
+        "operation": "subscript",
+        "scope": "child"
+      }
+    ]);
+  });
+
+  test('[30] empty tags generate a tag that is a function of the key, path and value. details are left to the implementation.', function() {
+    var results = jpql.parse('$..category[comedy.(#), (#{action})].(@(10))'); // expressions key.(#tag) and (#tag{script returning key}) are interchangeable
+    assert.deepEqual(results, [false]);
+  });
+
 
 })
 
@@ -1170,7 +1400,7 @@ suite('jsonpath#subscribe and take', function() {
   });
 
   test('[3] async: subscribe to path component updates, take top 10 action titles via active script operation "@(10)"', function() {
-    var results = jpql.parse('$..category.sorted.(#take(10){action}).title');
+    var results = jpql.parse('$..category.sorted.(@(10){action}).title');
     assert.deepEqual(results, [
       {
         "expression": {
@@ -1198,14 +1428,13 @@ suite('jsonpath#subscribe and take', function() {
         "expression": {
           "active": {
             "map": {
-              "async": "#",
+              "async": "@",
               "script": "{action}",
-              "tag": "take",
               "take": "10",
-              "value": "(#take(10){action})"
+              "value": "(@(10){action})"
             },
             "reduce": {},
-            "value": "(#take(10){action})"
+            "value": "(@(10){action})"
           },
           "type": "script_expression|active",
           "value": "({action})"
@@ -1225,7 +1454,7 @@ suite('jsonpath#subscribe and take', function() {
   });
 
   test('[4] async: subscribe to path component updates, take top 10 splat action titles via active script operation "@(10)"', function() {
-    var results = jpql.parse('$..category.sorted.(#(10)*{action, comedy}).title');
+    var results = jpql.parse('$..category.sorted.(*{action, comedy}).title.(@(10))');
     assert.deepEqual(results, [
       {
         "expression": {
@@ -1253,14 +1482,12 @@ suite('jsonpath#subscribe and take', function() {
         "expression": {
           "active": {
             "map": {
-              "async": "#",
               "operation": "*",
               "script": "{action, comedy}",
-              "take": "10",
-              "value": "(#(10)*{action, comedy})"
+              "value": "(*{action, comedy})"
             },
             "reduce": {},
-            "value": "(#(10)*{action, comedy})"
+            "value": "(*{action, comedy})"
           },
           "type": "script_expression|active",
           "value": "({action, comedy})"
@@ -1275,12 +1502,29 @@ suite('jsonpath#subscribe and take', function() {
         },
         "operation": "member",
         "scope": "child"
+      },
+      {
+        "expression": {
+          "active": {
+            "map": {
+              "async": "@",
+              "take": "10",
+              "value": "(@(10))"
+            },
+            "reduce": {},
+            "value": "(@(10))"
+          },
+          "type": "script_expression|active",
+          "value": "(undefined)"
+        },
+        "operation": "member",
+        "scope": "child"
       }
     ]);
   });
 
   test('[5] async: subscribe to path component updates, take top 10 from preceding partial', function() {
-    var results = jpql.parse('$..category.sorted.(#(10))');
+    var results = jpql.parse('$..category.sorted.(@(10))');
     assert.deepEqual(results, [
       {
         "expression": {
@@ -1308,12 +1552,12 @@ suite('jsonpath#subscribe and take', function() {
         "expression": {
           "active": {
             "map": {
-              "async": "#",
+              "async": "@",
               "take": "10",
-              "value": "(#(10))"
+              "value": "(@(10))"
             },
             "reduce": {},
-            "value": "(#(10))"
+            "value": "(@(10))"
           },
           "type": "script_expression|active",
           "value": "(undefined)"
@@ -1324,24 +1568,348 @@ suite('jsonpath#subscribe and take', function() {
     ]);
   });
 
-  test('[6] async: async and take path components', function() {
-    var results = jpql.parse('$..#.category.#tag.sorted.(10)');
-    assert.deepEqual(results, [false]);
+  test('[7] async: tag and asyncTake path components', function() {
+    var results = jpql.parse('$..(@(10)).category.(#tagSorted).sorted');
+    assert.deepEqual(results, [
+      {
+        "expression": {
+          "type": "root",
+          "value": "$"
+        }
+      },
+      {
+        "expression": {
+          "active": {
+            "map": {
+              "async": "@",
+              "take": "10",
+              "value": "(@(10))"
+            },
+            "reduce": {},
+            "value": "(@(10))"
+          },
+          "type": "script_expression|active",
+          "value": "(undefined)"
+        },
+        "operation": "member",
+        "scope": "descendant"
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "category"
+        },
+        "operation": "member",
+        "scope": "child"
+      },
+      {
+        "expression": {
+          "active": {
+            "map": {
+              "label": "tagSorted",
+              "tag": "#",
+              "value": "(#tagSorted)"
+            },
+            "reduce": {},
+            "value": "(#tagSorted)"
+          },
+          "type": "script_expression|active",
+          "value": "(undefined)"
+        },
+        "operation": "member",
+        "scope": "child"
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "sorted"
+        },
+        "operation": "member",
+        "scope": "child"
+      }
+    ]);
   });
 
-  test('[6] async: async take and asyncTake path components', function() {
-    var results = jpql.parse('$..#.category.#tagSorted(10).sorted');
-    assert.deepEqual(results, [false]);
+  test('[8] delete operation path component', function() {
+    var results = jpql.parse('$..category.(-).sorted'); // equivalent to '$..category.sorted.(-)'
+    assert.deepEqual(results, [
+      {
+        "expression": {
+          "type": "root",
+          "value": "$"
+        }
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "category"
+        },
+        "operation": "member",
+        "scope": "descendant"
+      },
+      {
+        "expression": {
+          "active": {
+            "map": {
+              "operation": "-",
+              "value": "(-)"
+            },
+            "reduce": {},
+            "value": "(-)"
+          },
+          "type": "script_expression|active",
+          "value": "(undefined)"
+        },
+        "operation": "member",
+        "scope": "child"
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "sorted"
+        },
+        "operation": "member",
+        "scope": "child"
+      }
+    ]);
   });
 
-  test('[7] delete operation path component', function() {
-    var results = jpql.parse('$..category.-.sorted'); // equivalent to '$..category.sorted.(-{})'
-    assert.deepEqual(results, [false]);
+  test('[9] Combo delete operation path component and add active script epxression', function() {
+    var results = jpql.parse('$..category[(-).sorted,(+{reverseSorted}):(=>{@.reverse()})]');
+    assert.deepEqual(results, [
+      {
+        "expression": {
+          "type": "root",
+          "value": "$"
+        }
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "category"
+        },
+        "operation": "member",
+        "scope": "descendant"
+      },
+      {
+        "expression": {
+          "type": "union",
+          "value": [
+            {
+              "branch": {
+                "path": [
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "sorted"
+                    },
+                    "operation": "member",
+                    "scope": "child|branch"
+                  }
+                ],
+                "scope": "branch"
+              },
+              "expression": {
+                "active": {
+                  "map": {
+                    "operation": "-",
+                    "value": "(-)"
+                  },
+                  "reduce": {},
+                  "value": "(-)"
+                },
+                "type": "script_expression|active",
+                "value": "(undefined)"
+              }
+            },
+            {
+              "expression": {
+                "active": {
+                  "map": {
+                    "operation": "+",
+                    "script": "{reverseSorted}",
+                    "value": "(+{reverseSorted})"
+                  },
+                  "reduce": {
+                    "operation": "=>",
+                    "script": "{@.reverse()}",
+                    "value": "(=>{@.reverse()})"
+                  },
+                  "value": "(+{reverseSorted}):(=>{@.reverse()})"
+                },
+                "type": "script_expression|active",
+                "value": "({reverseSorted})"
+              }
+            }
+          ]
+        },
+        "operation": "subscript",
+        "scope": "child"
+      }
+    ]);
   });
 
-  test('[7] Combo delete operation path component and add active script epxression', function() {
-    var results = jpql.parse('$..category[-.sorted,(+{reverseSorted}):(=>{@.reverse()})]');
-    assert.deepEqual(results, [false]);
-  });
+  test('[10] all aboard active script expression tag, take, operation, map and reduce', function() {
+      var results = jpql.parse('$..category[(-).sorted,(#reverse @(10) - {reverseSorted}):(#reversed @ => {@.reverse()})]');
+      assert.deepEqual(results, [
+        {
+          "expression": {
+            "type": "root",
+            "value": "$"
+          }
+        },
+        {
+          "expression": {
+            "type": "identifier",
+            "value": "category"
+          },
+          "operation": "member",
+          "scope": "descendant"
+        },
+        {
+          "expression": {
+            "type": "union",
+            "value": [
+              {
+                "branch": {
+                  "path": [
+                    {
+                      "expression": {
+                        "type": "identifier",
+                        "value": "sorted"
+                      },
+                      "operation": "member",
+                      "scope": "child|branch"
+                    }
+                  ],
+                  "scope": "branch"
+                },
+                "expression": {
+                  "active": {
+                    "map": {
+                      "operation": "-",
+                      "value": "(-)"
+                    },
+                    "reduce": {},
+                    "value": "(-)"
+                  },
+                  "type": "script_expression|active",
+                  "value": "(undefined)"
+                }
+              },
+              {
+                "expression": {
+                  "active": {
+                    "map": {
+                      "async": "@",
+                      "label": "reverse",
+                      "operation": "-",
+                      "script": "{reverseSorted}",
+                      "tag": "#",
+                      "take": "10",
+                      "value": "(#reverse @(10) - {reverseSorted})"
+                    },
+                    "reduce": {
+                      "async": "@",
+                      "label": "reversed",
+                      "operation": "=>",
+                      "script": "{@.reverse()}",
+                      "tag": "#",
+                      "value": "(#reversed @ => {@.reverse()})"
+                    },
+                    "value": "(#reverse @(10) - {reverseSorted}):(#reversed @ => {@.reverse()})"
+                  },
+                  "type": "script_expression|active",
+                  "value": "({reverseSorted})"
+                }
+              }
+            ]
+          },
+          "operation": "subscript",
+          "scope": "child"
+        }
+      ]);
+    });
+
+ test('[10-1] all aboard active script expression tag, take, operation, map and reduce', function() {
+      var results = jpql.parse('$..category[(-).sorted,(# @ - {reverseSorted}):(#reversed @(10) => {@.reverse()})]');
+      assert.deepEqual(results, [
+        {
+          "expression": {
+            "type": "root",
+            "value": "$"
+          }
+        },
+        {
+          "expression": {
+            "type": "identifier",
+            "value": "category"
+          },
+          "operation": "member",
+          "scope": "descendant"
+        },
+        {
+          "expression": {
+            "type": "union",
+            "value": [
+              {
+                "branch": {
+                  "path": [
+                    {
+                      "expression": {
+                        "type": "identifier",
+                        "value": "sorted"
+                      },
+                      "operation": "member",
+                      "scope": "child|branch"
+                    }
+                  ],
+                  "scope": "branch"
+                },
+                "expression": {
+                  "active": {
+                    "map": {
+                      "operation": "-",
+                      "value": "(-)"
+                    },
+                    "reduce": {},
+                    "value": "(-)"
+                  },
+                  "type": "script_expression|active",
+                  "value": "(undefined)"
+                }
+              },
+              {
+                "expression": {
+                  "active": {
+                    "map": {
+                      "async": "@",
+                      "operation": "-",
+                      "script": "{reverseSorted}",
+                      "tag": "#",
+                      "value": "(# @ - {reverseSorted})"
+                    },
+                    "reduce": {
+                      "async": "@",
+                      "label": "reversed",
+                      "operation": "=>",
+                      "script": "{@.reverse()}",
+                      "tag": "#",
+                      "take": "10",
+                      "value": "(#reversed @(10) => {@.reverse()})"
+                    },
+                    "value": "(# @ - {reverseSorted}):(#reversed @(10) => {@.reverse()})"
+                  },
+                  "type": "script_expression|active",
+                  "value": "({reverseSorted})"
+                }
+              }
+            ]
+          },
+          "operation": "subscript",
+          "scope": "child"
+        }
+      ]);
+    });
 
 })
