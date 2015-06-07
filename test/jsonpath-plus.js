@@ -712,6 +712,14 @@ suite('extended-jsonpath#parse', function() {
           "scope": "branch"
         },
         "expression": {
+          "active": {
+            "map": {
+              "script": "{$.byRating[-1]}",
+              "value": "({$.byRating[-1]})"
+            },
+            "reduce": {},
+            "value": "({$.byRating[-1]})"
+          },
           "type": "script_expression|active",
           "value": "({$.byRating[-1]})"
         },
@@ -2041,6 +2049,14 @@ test('parse list of single nested subscript component with leading nested path c
                 "scope": "branch"
               },
               "expression": {
+                "active": {
+                  "map": {
+                    "script": "{@.length-2}",
+                    "value": "({@.length-2})"
+                  },
+                  "reduce": {},
+                  "value": "({@.length-2})"
+                },
                 "type": "script_expression|active",
                 "value": "({@.length-2})"
               }
@@ -2060,6 +2076,14 @@ test('parse list of single nested subscript component with leading nested path c
                 "scope": "branch"
               },
               "expression": {
+                "active": {
+                  "map": {
+                    "script": "{@.length-1}",
+                    "value": "({@.length-1})"
+                  },
+                  "reduce": {},
+                  "value": "({@.length-1})"
+                },
                 "type": "script_expression|active",
                 "value": "({@.length-1})"
               }
@@ -2156,7 +2180,7 @@ test('parse list of single nested subscript component with leading nested path c
   });
 
   test('[Y] all books [author,title] via list of subscript expression with first level call expression -> active position anchor', function() {
-    var results = jpql.parse('$..book[(delay: 100).title,(delay: 100 ).price]');
+    var results = jpql.parse('$..book[(@(100)-{}).title,(@(5000)-{}).download]');
     assert.deepEqual(results, [
       {
         "expression": {
@@ -2181,18 +2205,6 @@ test('parse list of single nested subscript component with leading nested path c
                 "path": [
                   {
                     "expression": {
-                      "type": "call_expression",
-                      "value": {
-                        "params": {
-                          "delay": "100"
-                        }
-                      }
-                    },
-                    "operation": "subscript",
-                    "scope": "child|branch"
-                  },
-                  {
-                    "expression": {
                       "type": "identifier",
                       "value": "title"
                     },
@@ -2203,8 +2215,19 @@ test('parse list of single nested subscript component with leading nested path c
                 "scope": "branch"
               },
               "expression": {
-                "type": "active_position",
-                "value": "{{$index}}"
+                "active": {
+                  "map": {
+                    "async": "@",
+                    "operation": "-",
+                    "script": "{}",
+                    "take": "100",
+                    "value": "(@(100)-{})"
+                  },
+                  "reduce": {},
+                  "value": "(@(100)-{})"
+                },
+                "type": "script_expression|active",
+                "value": "({})"
               }
             },
             {
@@ -2212,20 +2235,8 @@ test('parse list of single nested subscript component with leading nested path c
                 "path": [
                   {
                     "expression": {
-                      "type": "call_expression",
-                      "value": {
-                        "params": {
-                          "delay": "100 "
-                        }
-                      }
-                    },
-                    "operation": "subscript",
-                    "scope": "child|branch"
-                  },
-                  {
-                    "expression": {
                       "type": "identifier",
-                      "value": "price"
+                      "value": "download"
                     },
                     "operation": "member",
                     "scope": "child|branch"
@@ -2234,8 +2245,19 @@ test('parse list of single nested subscript component with leading nested path c
                 "scope": "branch"
               },
               "expression": {
-                "type": "active_position",
-                "value": "{{$index}}"
+                "active": {
+                  "map": {
+                    "async": "@",
+                    "operation": "-",
+                    "script": "{}",
+                    "take": "5000",
+                    "value": "(@(5000)-{})"
+                  },
+                  "reduce": {},
+                  "value": "(@(5000)-{})"
+                },
+                "type": "script_expression|active",
+                "value": "({})"
               }
             }
           ]
@@ -2247,7 +2269,7 @@ test('parse list of single nested subscript component with leading nested path c
   });
 
   test('[Y] all books [author,title] via list of subscript expression with first level call expression -> active position anchor', function() {
-    var results = jpql.parse('$..book[(delay: 100).title,(delay: 100 ).price]');
+    var results = jpql.parse('$..book[(@(100)-{}).title,(@(100)-{}).price]');
     assert.deepEqual(results, [
       {
         "expression": {
@@ -2272,18 +2294,6 @@ test('parse list of single nested subscript component with leading nested path c
                 "path": [
                   {
                     "expression": {
-                      "type": "call_expression",
-                      "value": {
-                        "params": {
-                          "delay": "100"
-                        }
-                      }
-                    },
-                    "operation": "subscript",
-                    "scope": "child|branch"
-                  },
-                  {
-                    "expression": {
                       "type": "identifier",
                       "value": "title"
                     },
@@ -2294,25 +2304,24 @@ test('parse list of single nested subscript component with leading nested path c
                 "scope": "branch"
               },
               "expression": {
-                "type": "active_position",
-                "value": "{{$index}}"
+                "active": {
+                  "map": {
+                    "async": "@",
+                    "operation": "-",
+                    "script": "{}",
+                    "take": "100",
+                    "value": "(@(100)-{})"
+                  },
+                  "reduce": {},
+                  "value": "(@(100)-{})"
+                },
+                "type": "script_expression|active",
+                "value": "({})"
               }
             },
             {
               "branch": {
                 "path": [
-                  {
-                    "expression": {
-                      "type": "call_expression",
-                      "value": {
-                        "params": {
-                          "delay": "100 "
-                        }
-                      }
-                    },
-                    "operation": "subscript",
-                    "scope": "child|branch"
-                  },
                   {
                     "expression": {
                       "type": "identifier",
@@ -2325,8 +2334,19 @@ test('parse list of single nested subscript component with leading nested path c
                 "scope": "branch"
               },
               "expression": {
-                "type": "active_position",
-                "value": "{{$index}}"
+                "active": {
+                  "map": {
+                    "async": "@",
+                    "operation": "-",
+                    "script": "{}",
+                    "take": "100",
+                    "value": "(@(100)-{})"
+                  },
+                  "reduce": {},
+                  "value": "(@(100)-{})"
+                },
+                "type": "script_expression|active",
+                "value": "({})"
               }
             }
           ]
@@ -2338,7 +2358,7 @@ test('parse list of single nested subscript component with leading nested path c
   });
 
   test('[?] in call expression, spaces are illegal between the opening ( and the key, and between the key and the ":", parse as script expression', function() {
-    var results = jpql.parse('$..book[( delay: 100).title,( delay: 100 ).price]');
+    var results = jpql.parse('$..book[(@(100)-{}).title,(@(100)-{}).price]');
     assert.deepEqual(results, [
       {
         "expression": {
@@ -2373,8 +2393,19 @@ test('parse list of single nested subscript component with leading nested path c
                 "scope": "branch"
               },
               "expression": {
-                "type": "script_expression",
-                "value": "( delay: 100)"
+                "active": {
+                  "map": {
+                    "async": "@",
+                    "operation": "-",
+                    "script": "{}",
+                    "take": "100",
+                    "value": "(@(100)-{})"
+                  },
+                  "reduce": {},
+                  "value": "(@(100)-{})"
+                },
+                "type": "script_expression|active",
+                "value": "({})"
               }
             },
             {
@@ -2392,8 +2423,19 @@ test('parse list of single nested subscript component with leading nested path c
                 "scope": "branch"
               },
               "expression": {
-                "type": "script_expression",
-                "value": "( delay: 100 )"
+                "active": {
+                  "map": {
+                    "async": "@",
+                    "operation": "-",
+                    "script": "{}",
+                    "take": "100",
+                    "value": "(@(100)-{})"
+                  },
+                  "reduce": {},
+                  "value": "(@(100)-{})"
+                },
+                "type": "script_expression|active",
+                "value": "({})"
               }
             }
           ]
@@ -2405,7 +2447,7 @@ test('parse list of single nested subscript component with leading nested path c
   });
 
   test('[Y] subscript-style call expression with identifier style key', function() {
-    var results = jpql.parse('$..book(take: 2).title'); //subscript style call
+    var results = jpql.parse('$..book.(@(2)).title'); //subscript style call
     assert.deepEqual(results, [
       {
         "expression": {
@@ -2423,14 +2465,19 @@ test('parse list of single nested subscript component with leading nested path c
       },
       {
         "expression": {
-          "type": "call_expression",
-          "value": {
-            "params": {
-              "take": "2"
-            }
-          }
+          "active": {
+            "map": {
+              "async": "@",
+              "take": "2",
+              "value": "(@(2))"
+            },
+            "reduce": {},
+            "value": "(@(2))"
+          },
+          "type": "script_expression|active",
+          "value": "(undefined)"
         },
-        "operation": "subscript",
+        "operation": "member",
         "scope": "child"
       },
       {
@@ -2457,7 +2504,7 @@ test('parse list of single nested subscript component with leading nested path c
   });
 
   test('[?] subscript-style call expression with keyword literal style key coerces into string', function() {
-    var results = jpql.parse("$..book(true: 2).title"); //subscript style call
+    var results = jpql.parse("$..book.(#true{2}).title"); //subscript style call
     assert.deepEqual(results, [
       {
         "expression": {
@@ -2475,14 +2522,20 @@ test('parse list of single nested subscript component with leading nested path c
       },
       {
         "expression": {
-          "type": "call_expression",
-          "value": {
-            "params": {
-              "true": "2"
-            }
-          }
+          "active": {
+            "map": {
+              "label": "true",
+              "script": "{2}",
+              "tag": "#",
+              "value": "(#true{2})"
+            },
+            "reduce": {},
+            "value": "(#true{2})"
+          },
+          "type": "script_expression|active",
+          "value": "({2})"
         },
-        "operation": "subscript",
+        "operation": "member",
         "scope": "child"
       },
       {
@@ -2545,7 +2598,7 @@ test('parse list of single nested subscript component with leading nested path c
   });
 
   test('[X] descendant call expression', function() {
-    var results = jpql.parse('$.store.*..(take: 1).name'); //first of each category
+    var results = jpql.parse('$.store.*..(@(1)).name'); //first of each category
     assert.deepEqual(results, [
       {
         "expression": {
@@ -2571,14 +2624,19 @@ test('parse list of single nested subscript component with leading nested path c
       },
       {
         "expression": {
-          "type": "call_expression",
-          "value": {
-            "params": {
-              "take": "1"
-            }
-          }
+          "active": {
+            "map": {
+              "async": "@",
+              "take": "1",
+              "value": "(@(1))"
+            },
+            "reduce": {},
+            "value": "(@(1))"
+          },
+          "type": "script_expression|active",
+          "value": "(undefined)"
         },
-        "operation": "subscript",
+        "operation": "member",
         "scope": "descendant"
       },
       {
@@ -2590,10 +2648,6 @@ test('parse list of single nested subscript component with leading nested path c
         "scope": "child"
       }
     ]);
-  });
-
-  test('[negative] member call expression throws', function() {
-    assert.throws(function(){jpql.parse('$.store.book.(take: 2).title')}); //member style calls are meaningless
   });
 
   test('[X] active script expressions listables are still members :: SCRIPT', function() {

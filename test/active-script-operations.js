@@ -893,8 +893,40 @@ suite('jsonpath#active-script-operations', function() {
   });
 
   test('[18] deleting filter expression, shorthand for filter expression followed by delete expression operation without key or (-{}), partial remove "-" (DELETE), implementation is free to chose to warn or err if not found', function() {
-    var results = jpql.parse('$..book[?-(@.fulleName===null)]');
-    assert.deepEqual(results, [false]);
+    var results = jpql.parse('$..book[?-{@.fulleName===null}]');
+    assert.deepEqual(results, [
+      {
+        "expression": {
+          "type": "root",
+          "value": "$"
+        }
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "book"
+        },
+        "operation": "member",
+        "scope": "descendant"
+      },
+      {
+        "expression": {
+          "active": {
+            "filter": {
+              "operation": "-",
+              "script": "{@.fulleName===null}",
+              "value": "?-{@.fulleName===null}"
+            },
+            "stream": {},
+            "value": "?-{@.fulleName===null}"
+          },
+          "type": "filter_expression|active",
+          "value": "({@.fulleName===null})"
+        },
+        "operation": "subscript",
+        "scope": "child"
+      }
+    ]);
   });
 
  test('[19] [Structure Matching] lookahead filter expression, shorthand for filter expression with ANDed or ORed @.key expressions', function() {
@@ -936,7 +968,7 @@ suite('jsonpath#active-script-operations', function() {
         "expression": {
           "active": {
             "map": {
-              "operation": "=>",
+              "provider": "=>",
               "script": "{\"Not Available!\"}",
               "value": "(=>{\"Not Available!\"})"
             },
@@ -986,7 +1018,7 @@ suite('jsonpath#active-script-operations', function() {
                     "expression": {
                       "active": {
                         "map": {
-                          "operation": "=>",
+                          "provider": "=>",
                           "script": "{\"Not Available\"}",
                           "value": "(=>{\"Not Available\"})"
                         },
@@ -1016,7 +1048,7 @@ suite('jsonpath#active-script-operations', function() {
   });
 
  test('[23] parse mapping script, for this key return that value, key has to exist in the data source, Mocking and Defaults', function() {
-    var results = jpql.parse('$..book.reviews.(#{details}):(#retry @(10) => {"Temporary Not Available"})');
+    var results = jpql.parse('$..book.reviews.(#{details}):(#retry @(10) &=> {"Temporary Not Available"})');
     assert.deepEqual(results, [
       {
         "expression": {
@@ -1051,13 +1083,14 @@ suite('jsonpath#active-script-operations', function() {
             "reduce": {
               "async": "@",
               "label": "retry",
-              "operation": "=>",
+              "operation": "&",
+              "provider": "=>",
               "script": "{\"Temporary Not Available\"}",
               "tag": "#",
               "take": "10",
-              "value": "(#retry @(10) => {\"Temporary Not Available\"})"
+              "value": "(#retry @(10) &=> {\"Temporary Not Available\"})"
             },
-            "value": "(#{details}):(#retry @(10) => {\"Temporary Not Available\"})"
+            "value": "(#{details}):(#retry @(10) &=> {\"Temporary Not Available\"})"
           },
           "type": "script_expression|active",
           "value": "({details})"
@@ -1099,7 +1132,7 @@ suite('jsonpath#active-script-operations', function() {
               "expression": {
                 "active": {
                   "map": {
-                    "operation": "=>",
+                    "provider": "=>",
                     "script": "{@.fullName ? undefined : \"Not Available\"}",
                     "value": "(=>{@.fullName ? undefined : \"Not Available\"})"
                   },
@@ -1147,7 +1180,7 @@ suite('jsonpath#active-script-operations', function() {
         "expression": {
           "active": {
             "map": {
-              "operation": "=>",
+              "provider": "=>",
               "script": "{push}",
               "value": "(=>{push})"
             },
@@ -1167,7 +1200,7 @@ suite('jsonpath#active-script-operations', function() {
   });
 
   test('[26] parse active script operation call receiving computed argument', function() {
-    var results = jpql.parse('$.store.(=>{decrement}):(#tagExpired{$..book.onOffer[@.length-1]})');
+    var results = jpql.parse('$.store.(#reminder @(3) =>{"Only" + $offercount() + "left on offer!"}):(#offerCount +=>{$$..book.onOffer.(#offerCount +=>{@.length})'); // length | $offerCount via embedded path | $reminder 3 times
     assert.deepEqual(results, [
       {
         "expression": {
@@ -1187,20 +1220,74 @@ suite('jsonpath#active-script-operations', function() {
         "expression": {
           "active": {
             "map": {
-              "operation": "=>",
-              "script": "{decrement}",
-              "value": "(=>{decrement})"
+              "async": "@",
+              "label": "reminder",
+              "provider": "=>",
+              "script": "{\"Only\" + $offercount() + \"left on offer!\"}",
+              "tag": "#",
+              "take": "3",
+              "value": "(#reminder @(3) =>{\"Only\" + $offercount() + \"left on offer!\"})"
             },
             "reduce": {
-              "label": "tagExpired",
-              "script": "{$..book.onOffer[@.length-1]}",
+              "label": "offerCount",
+              "operation": "+",
+              "provider": "=>",
+              "script": "{$$..book.onOffer.(#offerCount +=>{@.length}",
               "tag": "#",
-              "value": "(#tagExpired{$..book.onOffer[@.length-1]})"
+              "value": "(#offerCount +=>{$$..book.onOffer.(#offerCount +=>{@.length})"
             },
-            "value": "(=>{decrement}):(#tagExpired{$..book.onOffer[@.length-1]})"
+            "value": "(#reminder @(3) =>{\"Only\" + $offercount() + \"left on offer!\"}):(#offerCount +=>{$$..book.onOffer.(#offerCount +=>{@.length})"
           },
           "type": "script_expression|active",
-          "value": "({decrement})"
+          "value": "({\"Only\" + $offercount() + \"left on offer!\"})"
+        },
+        "operation": "member",
+        "scope": "child"
+      }
+    ]);
+  });
+
+  test('[26-1] parse active script operation call receiving computed argument via consuming a thiscribit', function() {
+    var results = jpql.parse('$.store.(#reminder @(3) =>{"Only" + $offercount() + "left on offer!"}):(#offerCount ==>{})'); // length | $offerCount source piping #source ==> | $reminder 3 times
+    assert.deepEqual(results, [
+      {
+        "expression": {
+          "type": "root",
+          "value": "$"
+        }
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "store"
+        },
+        "operation": "member",
+        "scope": "child"
+      },
+      {
+        "expression": {
+          "active": {
+            "map": {
+              "async": "@",
+              "label": "reminder",
+              "provider": "=>",
+              "script": "{\"Only\" + $offercount() + \"left on offer!\"}",
+              "tag": "#",
+              "take": "3",
+              "value": "(#reminder @(3) =>{\"Only\" + $offercount() + \"left on offer!\"})"
+            },
+            "reduce": {
+              "label": "offerCount",
+              "operation": "=",
+              "provider": "=>",
+              "script": "{}",
+              "tag": "#",
+              "value": "(#offerCount ==>{})"
+            },
+            "value": "(#reminder @(3) =>{\"Only\" + $offercount() + \"left on offer!\"}):(#offerCount ==>{})"
+          },
+          "type": "script_expression|active",
+          "value": "({\"Only\" + $offercount() + \"left on offer!\"})"
         },
         "operation": "member",
         "scope": "child"
@@ -1382,7 +1469,90 @@ suite('jsonpath#active-script-operations', function() {
 
   test('[30] empty tags generate a tag that is a function of the key, path and value. details are left to the implementation.', function() {
     var results = jpql.parse('$..category[comedy.(#), (#{action})].(@(10))'); // expressions key.(#tag) and (#tag{script returning key}) are interchangeable
-    assert.deepEqual(results, [false]);
+    assert.deepEqual(results, [
+      {
+        "expression": {
+          "type": "root",
+          "value": "$"
+        }
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "category"
+        },
+        "operation": "member",
+        "scope": "descendant"
+      },
+      {
+        "expression": {
+          "type": "union",
+          "value": [
+            {
+              "branch": {
+                "path": [
+                  {
+                    "expression": {
+                      "active": {
+                        "map": {
+                          "tag": "#",
+                          "value": "(#)"
+                        },
+                        "reduce": {},
+                        "value": "(#)"
+                      },
+                      "type": "script_expression|active",
+                      "value": "(undefined)"
+                    },
+                    "operation": "member",
+                    "scope": "child|branch"
+                  }
+                ],
+                "scope": "branch"
+              },
+              "expression": {
+                "type": "identifier",
+                "value": "comedy"
+              }
+            },
+            {
+              "expression": {
+                "active": {
+                  "map": {
+                    "script": "{action}",
+                    "tag": "#",
+                    "value": "(#{action})"
+                  },
+                  "reduce": {},
+                  "value": "(#{action})"
+                },
+                "type": "script_expression|active",
+                "value": "({action})"
+              }
+            }
+          ]
+        },
+        "operation": "subscript",
+        "scope": "child"
+      },
+      {
+        "expression": {
+          "active": {
+            "map": {
+              "async": "@",
+              "take": "10",
+              "value": "(@(10))"
+            },
+            "reduce": {},
+            "value": "(@(10))"
+          },
+          "type": "script_expression|active",
+          "value": "(undefined)"
+        },
+        "operation": "member",
+        "scope": "child"
+      }
+    ]);
   });
 
 
@@ -1390,14 +1560,224 @@ suite('jsonpath#active-script-operations', function() {
 
 suite('jsonpath#subscribe and take', function() {
   test('[1] async: subscribe to filtered path component updates', function() {
-    var results = jpql.parse('$..book.?#tagPending(@.title===null)]');
-    assert.deepEqual(results, [false]);
+    var results = jpql.parse('$..book.?#tagPending{@.title===null}');
+    assert.deepEqual(results, [
+      {
+        "expression": {
+          "type": "root",
+          "value": "$"
+        }
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "book"
+        },
+        "operation": "member",
+        "scope": "descendant"
+      },
+      {
+        "expression": {
+          "active": {
+            "filter": {
+              "label": "tagPending",
+              "script": "{@.title===null}",
+              "tag": "#",
+              "value": "?#tagPending{@.title===null}"
+            },
+            "stream": {},
+            "value": "?#tagPending{@.title===null}"
+          },
+          "type": "filter_expression|active",
+          "value": "({@.title===null})"
+        },
+        "operation": "member",
+        "scope": "child"
+      }
+    ]);
   });
 
   test('[2] async: subscribe to filtered path component updates, take 10', function() {
-    var results = jpql.parse('$..book.?#(10)(@$.title===null)]');
-    assert.deepEqual(results, [false]);
+    var results = jpql.parse('$..book.? #error @(10) {@$.title===null}');
+    assert.deepEqual(results, [
+      {
+        "expression": {
+          "type": "root",
+          "value": "$"
+        }
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "book"
+        },
+        "operation": "member",
+        "scope": "descendant"
+      },
+      {
+        "expression": {
+          "active": {
+            "filter": {
+              "async": "@",
+              "label": "error",
+              "script": "{@$.title===null}",
+              "tag": "#",
+              "take": "10",
+              "value": "? #error @(10) {@$.title===null}"
+            },
+            "stream": {},
+            "value": "? #error @(10) {@$.title===null}"
+          },
+          "type": "filter_expression|active",
+          "value": "({@$.title===null})"
+        },
+        "operation": "member",
+        "scope": "child"
+      }
+    ]);
   });
+
+  test('[2-1] async: subscribe to filtered path component updates with tagged argument passing, take 10', function() {
+    var results = jpql.parse('$..book.?@(10){$title==="mybook"}:(#title @(1) {@.title.toLowerCase()})'); // equivalent to '$..book.?@(10)(@.title.toLowerCase()=="mybook"), often with a more beefy filter lambda
+    assert.deepEqual(results, [
+      {
+        "expression": {
+          "type": "root",
+          "value": "$"
+        }
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "book"
+        },
+        "operation": "member",
+        "scope": "descendant"
+      },
+      {
+        "expression": {
+          "active": {
+            "filter": {
+              "async": "@",
+              "script": "{$title===\"mybook\"}",
+              "take": "10",
+              "value": "?@(10){$title===\"mybook\"}"
+            },
+            "stream": {
+              "async": "@",
+              "label": "title",
+              "script": "{@.title.toLowerCase()}",
+              "tag": "#",
+              "take": "1",
+              "value": "(#title @(1) {@.title.toLowerCase()})"
+            },
+            "value": "?@(10){$title===\"mybook\"}:(#title @(1) {@.title.toLowerCase()})"
+          },
+          "type": "filter_expression|active",
+          "value": "({$title===\"mybook\"})"
+        },
+        "operation": "member",
+        "scope": "child"
+      }
+    ]);
+  });
+
+  test('[2-3] async: subscribe to filtered path component updates without splatting the list of tagged arguments, implementation should call the filter for each, take 10', function() {
+    var results = jpql.parse('$..book.?@(10){$lang in ["english", "french"]}:(#primarySecondaryLang @(1) {[@.language.primary.toLowerCase(), @.language.primary.toLowerCase()]})'); // equivalent to '$..book.?@(10)(@.title.toLowerCase()=="mybook"), often with a more beefy filter lambda
+    assert.deepEqual(results, [
+      {
+        "expression": {
+          "type": "root",
+          "value": "$"
+        }
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "book"
+        },
+        "operation": "member",
+        "scope": "descendant"
+      },
+      {
+        "expression": {
+          "active": {
+            "filter": {
+              "async": "@",
+              "script": "{$lang in [\"english\", \"french\"]}",
+              "take": "10",
+              "value": "?@(10){$lang in [\"english\", \"french\"]}"
+            },
+            "stream": {
+              "async": "@",
+              "label": "primarySecondaryLang",
+              "script": "{[@.language.primary.toLowerCase(), @.language.primary.toLowerCase()]}",
+              "tag": "#",
+              "take": "1",
+              "value": "(#primarySecondaryLang @(1) {[@.language.primary.toLowerCase(), @.language.primary.toLowerCase()]})"
+            },
+            "value": "?@(10){$lang in [\"english\", \"french\"]}:(#primarySecondaryLang @(1) {[@.language.primary.toLowerCase(), @.language.primary.toLowerCase()]})"
+          },
+          "type": "filter_expression|active",
+          "value": "({$lang in [\"english\", \"french\"]})"
+        },
+        "operation": "member",
+        "scope": "child"
+      }
+    ]);
+  });
+
+  test('[2-4] async: subscribe to filtered path component updates with splatting list of tagged arguments, implementation should assign the arguments array to an injected variable $tag, take 10', function() {
+    var results = jpql.parse('$..book.?#englishFromAmazon @(10) +=>{"english" in $lang}:(#primarySecondaryLang @(1) *=>{[$escapeAll(@.language.primary.toLowerCase()), $escapeAll(@.language.primary.toLowerCase())]})'); // equivalent to '$..book.?@(10)(@.title.toLowerCase()=="mybook"), often with a more beefy filter lambda
+    assert.deepEqual(results, [
+      {
+        "expression": {
+          "type": "root",
+          "value": "$"
+        }
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "book"
+        },
+        "operation": "member",
+        "scope": "descendant"
+      },
+      {
+        "expression": {
+          "active": {
+            "filter": {
+              "async": "@",
+              "label": "englishFromAmazon",
+              "operation": "+",
+              "provider": "=>",
+              "script": "{\"english\" in $lang}",
+              "tag": "#",
+              "take": "10",
+              "value": "?#englishFromAmazon @(10) +=>{\"english\" in $lang}"
+            },
+            "stream": {
+              "async": "@",
+              "label": "primarySecondaryLang",
+              "operation": "*",
+              "provider": "=>",
+              "script": "{[$escapeAll(@.language.primary.toLowerCase()), $escapeAll(@.language.primary.toLowerCase())]}",
+              "tag": "#",
+              "take": "1",
+              "value": "(#primarySecondaryLang @(1) *=>{[$escapeAll(@.language.primary.toLowerCase()), $escapeAll(@.language.primary.toLowerCase())]})"
+            },
+            "value": "?#englishFromAmazon @(10) +=>{\"english\" in $lang}:(#primarySecondaryLang @(1) *=>{[$escapeAll(@.language.primary.toLowerCase()), $escapeAll(@.language.primary.toLowerCase())]})"
+          },
+          "type": "filter_expression|active",
+          "value": "({\"english\" in $lang})"
+        },
+        "operation": "member",
+        "scope": "child"
+      }
+    ]);
+  });
+
 
   test('[3] async: subscribe to path component updates, take top 10 action titles via active script operation "@(10)"', function() {
     var results = jpql.parse('$..category.sorted.(@(10){action}).title');
@@ -1675,7 +2055,7 @@ suite('jsonpath#subscribe and take', function() {
   });
 
   test('[9] Combo delete operation path component and add active script epxression', function() {
-    var results = jpql.parse('$..category[(-).sorted,(+{reverseSorted}):(=>{@.reverse()})]');
+    var results = jpql.parse('$..category[(-).sorted,(+{reverseSorted}):(=>{@.reverse()})]'); //one off provider, equivalent to $..category[(-).sorted,(+=>{@.reverse()})]
     assert.deepEqual(results, [
       {
         "expression": {
@@ -1731,7 +2111,7 @@ suite('jsonpath#subscribe and take', function() {
                     "value": "(+{reverseSorted})"
                   },
                   "reduce": {
-                    "operation": "=>",
+                    "provider": "=>",
                     "script": "{@.reverse()}",
                     "value": "(=>{@.reverse()})"
                   },
@@ -1812,7 +2192,7 @@ suite('jsonpath#subscribe and take', function() {
                     "reduce": {
                       "async": "@",
                       "label": "reversed",
-                      "operation": "=>",
+                      "provider": "=>",
                       "script": "{@.reverse()}",
                       "tag": "#",
                       "value": "(#reversed @ => {@.reverse()})"
@@ -1892,7 +2272,7 @@ suite('jsonpath#subscribe and take', function() {
                     "reduce": {
                       "async": "@",
                       "label": "reversed",
-                      "operation": "=>",
+                      "provider": "=>",
                       "script": "{@.reverse()}",
                       "tag": "#",
                       "take": "10",
@@ -1912,4 +2292,87 @@ suite('jsonpath#subscribe and take', function() {
       ]);
     });
 
+
+  test('[11] pipes ending with a throttling filter', function() {
+    var results = jpql.parse('$..category.sorted.(#description =>{"Movie Category: {@.name, @,rating}"}).(@(1000)).(#throttle =>{[$login($username, $password), $taz(this), $register(this, 100s)]})');
+    assert.deepEqual(results, [
+      {
+        "expression": {
+          "type": "root",
+          "value": "$"
+        }
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "category"
+        },
+        "operation": "member",
+        "scope": "descendant"
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "sorted"
+        },
+        "operation": "member",
+        "scope": "child"
+      },
+      {
+        "expression": {
+          "active": {
+            "map": {
+              "label": "description",
+              "provider": "=>",
+              "script": "{\"Movie Category: {@.name, @,rating}\"}",
+              "tag": "#",
+              "value": "(#description =>{\"Movie Category: {@.name, @,rating}\"})"
+            },
+            "reduce": {},
+            "value": "(#description =>{\"Movie Category: {@.name, @,rating}\"})"
+          },
+          "type": "script_expression|active",
+          "value": "({\"Movie Category: {@.name, @,rating}\"})"
+        },
+        "operation": "member",
+        "scope": "child"
+      },
+      {
+        "expression": {
+          "active": {
+            "map": {
+              "async": "@",
+              "take": "1000",
+              "value": "(@(1000))"
+            },
+            "reduce": {},
+            "value": "(@(1000))"
+          },
+          "type": "script_expression|active",
+          "value": "(undefined)"
+        },
+        "operation": "member",
+        "scope": "child"
+      },
+      {
+        "expression": {
+          "active": {
+            "map": {
+              "label": "throttle",
+              "provider": "=>",
+              "script": "{[$login($username, $password), $taz(this), $register(this, 100s)]}",
+              "tag": "#",
+              "value": "(#throttle =>{[$login($username, $password), $taz(this), $register(this, 100s)]})"
+            },
+            "reduce": {},
+            "value": "(#throttle =>{[$login($username, $password), $taz(this), $register(this, 100s)]})"
+          },
+          "type": "script_expression|active",
+          "value": "({[$login($username, $password), $taz(this), $register(this, 100s)]})"
+        },
+        "operation": "member",
+        "scope": "child"
+      }
+    ]);
+  })
 })

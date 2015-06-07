@@ -4,7 +4,7 @@ var jpql = new require('../lib/index')();
 suite('graphql#parse-common', function() {
 
   test('Feature graphqlite npm example', function () {
-    var path = jpql.parse("node(id: 123){id,name,birthdate{month,day}, friends(first: 1){cursor,edges{node{name}}}}");
+    var path = jpql.parse("node.(#nodeById +=>{123}){id,name,birthdate{month,day}, friends.(#first +=> {1}){cursor,edges{node{name}}}}");
     assert.deepEqual(path, [
       {
         "expression": {
@@ -16,14 +16,22 @@ suite('graphql#parse-common', function() {
       },
       {
         "expression": {
-          "type": "call_expression",
-          "value": {
-            "params": {
-              "id": "123"
-            }
-          }
+          "active": {
+            "map": {
+              "label": "nodeById",
+              "operation": "+",
+              "provider": "=>",
+              "script": "{123}",
+              "tag": "#",
+              "value": "(#nodeById +=>{123})"
+            },
+            "reduce": {},
+            "value": "(#nodeById +=>{123})"
+          },
+          "type": "script_expression|active",
+          "value": "({123})"
         },
-        "operation": "subscript",
+        "operation": "member",
         "scope": "child"
       },
       {
@@ -79,14 +87,22 @@ suite('graphql#parse-common', function() {
                 "path": [
                   {
                     "expression": {
-                      "type": "call_expression",
-                      "value": {
-                        "params": {
-                          "first": "1"
-                        }
-                      }
+                      "active": {
+                        "map": {
+                          "label": "first",
+                          "operation": "+",
+                          "provider": "=>",
+                          "script": "{1}",
+                          "tag": "#",
+                          "value": "(#first +=> {1})"
+                        },
+                        "reduce": {},
+                        "value": "(#first +=> {1})"
+                      },
+                      "type": "script_expression|active",
+                      "value": "({1})"
                     },
-                    "operation": "subscript",
+                    "operation": "member",
                     "scope": "child|branch"
                   },
                   {
@@ -153,7 +169,7 @@ suite('graphql#parse-common', function() {
   });
 
  test('Feature graphqlite npm example returning union as an Observable', function () {
-    var path = jpql.parse("node(id: 123){id,name,birthdate{month,day}, friends(first: 1).observable{edges{node{name}}}}");
+    var path = jpql.parse("node.({123}){id,name,birthdate{month,day}, friends.(@(1)).observable{edges{node{name}}}}");
     assert.deepEqual(path, [
       {
         "expression": {
@@ -165,14 +181,18 @@ suite('graphql#parse-common', function() {
       },
       {
         "expression": {
-          "type": "call_expression",
-          "value": {
-            "params": {
-              "id": "123"
-            }
-          }
+          "active": {
+            "map": {
+              "script": "{123}",
+              "value": "({123})"
+            },
+            "reduce": {},
+            "value": "({123})"
+          },
+          "type": "script_expression|active",
+          "value": "({123})"
         },
-        "operation": "subscript",
+        "operation": "member",
         "scope": "child"
       },
       {
@@ -228,14 +248,19 @@ suite('graphql#parse-common', function() {
                 "path": [
                   {
                     "expression": {
-                      "type": "call_expression",
-                      "value": {
-                        "params": {
-                          "first": "1"
-                        }
-                      }
+                      "active": {
+                        "map": {
+                          "async": "@",
+                          "take": "1",
+                          "value": "(@(1))"
+                        },
+                        "reduce": {},
+                        "value": "(@(1))"
+                      },
+                      "type": "script_expression|active",
+                      "value": "(undefined)"
                     },
-                    "operation": "subscript",
+                    "operation": "member",
                     "scope": "child|branch"
                   },
                   {
