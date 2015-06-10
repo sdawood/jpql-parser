@@ -2372,7 +2372,46 @@ suite('jsonpathql#active filter component', function() {
   });
 
   test('regex path component', function() {
-    var results = jpql.parse('$..book.category../^[aA]ction/g');
-    assert.deepEqual(results, [false]);
+    var results = jpql.parse('$..book.category..({/^[aA]ction/g})');
+    assert.deepEqual(results, [
+      {
+        "expression": {
+          "type": "root",
+          "value": "$"
+        }
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "book"
+        },
+        "operation": "member",
+        "scope": "descendant"
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "category"
+        },
+        "operation": "member",
+        "scope": "child"
+      },
+      {
+        "expression": {
+          "active": {
+            "map": {
+              "script": "{/^[aA]ction/g}",
+              "value": "({/^[aA]ction/g})"
+            },
+            "reduce": {},
+            "value": "({/^[aA]ction/g})"
+          },
+          "type": "script_expression|active",
+          "value": "({/^[aA]ction/g})"
+        },
+        "operation": "member",
+        "scope": "descendant"
+      }
+    ]);
   });
 })
