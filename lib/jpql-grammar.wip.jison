@@ -8,7 +8,6 @@
 
 /* lexical grammar */
 /* lex macros */
-
 %lex
 
 DecimalDigit [0-9]
@@ -54,38 +53,30 @@ RegularExpressionLiteral {RegularExpressionBody}\/{RegularExpressionFlags}
 
 /*DATATAZ macros*/
 
-QQString                                                        \\"(?:\[\\"bfnrt/\]|\u[a-fA-F0-9]{4}|[^\"\])*\\" /* (\"{DoubleStringCharacter}*\") */
-QString                                                         \\'(?:\[\\'\\bfnrt/\]|\u[a-fA-F0-9]{4}|[^\'\])*\\' /* (\'{SingleStringCharacter}*\') */
-Tag                                                             (#){Identifier}?
-AsyncTake                                                       (@)(\({SignedInteger}?\))?
+QQString                                                        \"{DoubleStringCharacter}*\"
+QString                                                         \'{SingleStringCharacter}*\'
+
+/* one tag or allow multiple? */
+Tag                                                             ('#'){Identifier}?
+AsyncTake                                                       ('@')(\\({SignedInteger}?\\))?
 /* (map, (post or put), put, post, merge, delete, splat) */
 ScriptOperation                                                 [~=\+&\-\*]*
 /* tazbits provider script */
-Provides                                                        =>
+Provides                                                        '=>'
 ActiveScriptExpressionToken                                     \(\s*{Tag}?\s*{AsyncTake}?\s*{ScriptOperation}?\s*{Provides}?\s*(\{.*?\})?\)(?=[\:\[\]\,\{\}\.]|$)
 ActiveFilterExpressionToken                                     \?(?!\()\s*{Tag}?\s*{AsyncTake}?\s*{ScriptOperation}?\s*{Provides}?\s*(\{.*?\})?(?=[\:\[\]\,\{\}\.]|$)
 ScriptExpressionToken                                           \(.+?\)(?=[\:\[\]\,\{\}\.]|$)
 FilterExpressionToken                                           \?\(.+?\)(?=[\:\[\]\,\{\}\.]|$)
 
-/*lex rules*/
-
-/* %x REGEXP */
 %options flex
-
 %%
 
-/* <REGEXP>{RegularExpressionLiteral} %{                            */
-/*                                         this.begin('INITIAL');   */
-/*                                         return 'REGEXP_LITERAL'; */
-/*                                    %}                            */
-
-/* DATA TAZ LEX RULES */
-\s+                                                             {/* skip white spaces */}
-\$(?![\$a-zA-Z0-9_])                                            return 'DOLLAR_TOKEN';
-@\$(?![\$a-zA-Z0-9_])                                           return 'ACTIVE_ROOT_TOKEN';
+\s+                                                             /* ignore */
+"$"(?![\$a-zA-Z0-9_])                                            return 'DOLLAR_TOKEN';
+"@"\$(?![\$a-zA-Z0-9_])                                           return 'ACTIVE_ROOT_TOKEN';
 \.\.                                                            return 'DOT_DOT';
 \.                                                              return 'DOT';
-\*                                                              return yytext.toUpperCase() + '_TOKEN';
+\*                                                              return 'STAR_TOKEN';
 'true'                                                          return yytext.toUpperCase() + '_TOKEN';
 'false'                                                         return yytext.toUpperCase() + '_TOKEN';
 'null'                                                          return yytext.toUpperCase() + '_TOKEN';
@@ -98,7 +89,7 @@ FilterExpressionToken                                           \?\(.+?\)(?=[\:\
                                                                          value: yy.lexer.matches[0],
                                                                          map: {
                                                                            value: yy.lexer.matches[1],
-                                                                           tag: yy.lexer.matches[3], /* one tag or allow multiple? */
+                                                                           tag: yy.lexer.matches[3],
                                                                            label: yy.lexer.matches[4],
                                                                            async: yy.lexer.matches[16],
                                                                            take: yy.lexer.matches[18],
@@ -228,6 +219,7 @@ FilterExpressionToken                                           \?\(.+?\)(?=[\:\
 'import'                                                                                    throw new Error('Illegal keyword: ' + yytext);
 'super'                                                                                     throw new Error('Illegal keyword: ' + yytext);
 
+
 /* RESERVED OPERATORS */
 /* '.'                                                                                      return 'RESERVED_OPERATOR_TOKEN'; */
 /* ';'                                                                                      return 'RESERVED_OPERATOR_TOKEN'; */
@@ -272,14 +264,23 @@ FilterExpressionToken                                           \?\(.+?\)(?=[\:\
 /* '~'                                                                                      return 'RESERVED_OPERATOR_TOKEN'; */
 /* <<EOF>>                                                                                  return 'EOF'; */
 
-/lex
-/* jsonpathql parser */
+%%
+
+/* Begin Lexer Customization Methods */
+var ast = {};
+/* End Lexer Customization Methods */
+
+/lex/* jsonpathql parser */
 
 /* Code blocks are inserted at the top of the generated module. */
-
+%{
+    var ast = require('./ast');
+%}
 
 /* enable EBNF grammar syntax */
 %start JSON_PATH /* Define Start Production */
+/* enable EBNF grammar syntax */
+%ebnf
 %% /* Define Grammar Productions */
 
 JSON_PATH

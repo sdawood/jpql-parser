@@ -1,10 +1,14 @@
 /* jsonpathql parser */
 
 /* Code blocks are inserted at the top of the generated module. */
-
+%{
+    var ast = require('./ast');
+%}
 
 /* enable EBNF grammar syntax */
 %start JSON_PATH /* Define Start Production */
+/* enable EBNF grammar syntax */
+%ebnf
 %% /* Define Grammar Productions */
 
 JSON_PATH
