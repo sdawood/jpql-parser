@@ -2311,7 +2311,7 @@ suite('jsonpathql#active filter component', function() {
   });
 
   test('async: subscribe to filtered path component updates with splatting list of tagged arguments, implementation should assign the arguments array to an injected variable $tag, take 10', function() {
-    var results = jpql.parse('$..book.?#englishFromAmazon @(10) +=>{"english" in $lang}:(#primarySecondaryLang @(1) *=>{[$escapeAll(@.language.primary.toLowerCase()), $escapeAll(@.language.primary.toLowerCase())]})'); // equivalent to '$..book.?@(10)(@.title.toLowerCase()=="mybook"), often with a more beefy filter lambda
+    var results = jpql.parse('$..book.?<= #englishFromAmazon @(10) +=>{"english" in $lang}:(#primarySecondaryLang @(1) *=>{[$escapeAll(@.language.primary.toLowerCase()), $escapeAll(@.language.primary.toLowerCase())]})'); // equivalent to '$..book.?@(10)(@.title.toLowerCase()=="mybook"), often with a more beefy filter lambda
     assert.deepEqual(results, [
       {
         "expression": {
@@ -2332,13 +2332,14 @@ suite('jsonpathql#active filter component', function() {
           "active": {
             "filter": {
               "async": "@",
+              "flag": "<=",
               "label": "englishFromAmazon",
               "operation": "+",
               "provider": "=>",
               "script": "{\"english\" in $lang}",
               "tag": "#",
               "take": "10",
-              "value": "?#englishFromAmazon @(10) +=>{\"english\" in $lang}"
+              "value": "?<= #englishFromAmazon @(10) +=>{\"english\" in $lang}"
             },
             "stream": {
               "async": "@",
@@ -2350,7 +2351,7 @@ suite('jsonpathql#active filter component', function() {
               "take": "1",
               "value": "(#primarySecondaryLang @(1) *=>{[$escapeAll(@.language.primary.toLowerCase()), $escapeAll(@.language.primary.toLowerCase())]})"
             },
-            "value": "?#englishFromAmazon @(10) +=>{\"english\" in $lang}:(#primarySecondaryLang @(1) *=>{[$escapeAll(@.language.primary.toLowerCase()), $escapeAll(@.language.primary.toLowerCase())]})"
+            "value": "?<= #englishFromAmazon @(10) +=>{\"english\" in $lang}:(#primarySecondaryLang @(1) *=>{[$escapeAll(@.language.primary.toLowerCase()), $escapeAll(@.language.primary.toLowerCase())]})"
           },
           "type": "filter_expression|active",
           "value": "({\"english\" in $lang})"
@@ -2361,14 +2362,222 @@ suite('jsonpathql#active filter component', function() {
     ]);
   });
 
-  test('[Structure Matching] lookahead filter expression, shorthand for filter expression with ANDed or ORed @.key expressions', function() {
-    var results = jpql.parse('$..book[?=(@)].discount'); //equivalent to $..book[?(@.discount)]' but effectively uses the next component as a structural template to mach the current object against
-    assert.deepEqual(results, [false]);
+  test('[Structure Matching] positive lookahead filter expression, shorthand for filter expression with ANDed or ORed @.key expressions', function() {
+    var results = jpql.parse('$..book[?={@}].discount'); //equivalent to $..book[?(@.discount)]' but effectively uses the next component as a structural template to mach the current object against
+    assert.deepEqual(results, [
+      {
+        "expression": {
+          "type": "root",
+          "value": "$"
+        }
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "book"
+        },
+        "operation": "member",
+        "scope": "descendant"
+      },
+      {
+        "expression": {
+          "active": {
+            "filter": {
+              "flag": "=",
+              "script": "{@}",
+              "value": "?={@}"
+            },
+            "stream": {},
+            "value": "?={@}"
+          },
+          "type": "filter_expression|active",
+          "value": "({@})"
+        },
+        "operation": "subscript",
+        "scope": "child"
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "discount"
+        },
+        "operation": "member",
+        "scope": "child"
+      }
+    ]);
   });
 
-  test('[Structure Matching]negative lookahead filter expression, shorthand for filter expression followed by delete expression operation without key or (-{}), partial remove "-" (DELETE), implementation is free to chose to warn or err if not found', function() {
-    var results = jpql.parse('$..book[?!(@)][invalid, deprecated, obsolete]'); //equivalent to $..book[?(!@.invalid && !@.deprecated && !@.onbsolete )]
-    assert.deepEqual(results, [false]);
+  test('[Structure Matching] negative lookahead filter expression, shorthand for filter expression followed by delete expression operation without key or (-{}), partial remove "-" (DELETE), implementation is free to chose to warn or err if not found', function() {
+    var results = jpql.parse('$..book[?!{@}][invalid, deprecated, obsolete]'); //equivalent to $..book[?(!@.invalid && !@.deprecated && !@.onbsolete )]
+    assert.deepEqual(results, [
+      {
+        "expression": {
+          "type": "root",
+          "value": "$"
+        }
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "book"
+        },
+        "operation": "member",
+        "scope": "descendant"
+      },
+      {
+        "expression": {
+          "active": {
+            "filter": {
+              "flag": "!",
+              "script": "{@}",
+              "value": "?!{@}"
+            },
+            "stream": {},
+            "value": "?!{@}"
+          },
+          "type": "filter_expression|active",
+          "value": "({@})"
+        },
+        "operation": "subscript",
+        "scope": "child"
+      },
+      {
+        "expression": {
+          "type": "union",
+          "value": [
+            {
+              "expression": {
+                "type": "identifier",
+                "value": "invalid"
+              }
+            },
+            {
+              "expression": {
+                "type": "identifier",
+                "value": "deprecated"
+              }
+            },
+            {
+              "expression": {
+                "type": "identifier",
+                "value": "obsolete"
+              }
+            }
+          ]
+        },
+        "operation": "subscript",
+        "scope": "child"
+      }
+    ]);
+  });
+
+  test('[Structure Matching] positive lookbehind filter expression, shorthand for filter expression with ANDed or ORed @.key expressions', function() {
+    var results = jpql.parse('$..book[?<={@}].discount'); //equivalent to $..book[?(@.discount)]' but effectively uses the previous component as a structural template to mach the current object against
+    assert.deepEqual(results, [
+      {
+        "expression": {
+          "type": "root",
+          "value": "$"
+        }
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "book"
+        },
+        "operation": "member",
+        "scope": "descendant"
+      },
+      {
+        "expression": {
+          "active": {
+            "filter": {
+              "flag": "<=",
+              "script": "{@}",
+              "value": "?<={@}"
+            },
+            "stream": {},
+            "value": "?<={@}"
+          },
+          "type": "filter_expression|active",
+          "value": "({@})"
+        },
+        "operation": "subscript",
+        "scope": "child"
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "discount"
+        },
+        "operation": "member",
+        "scope": "child"
+      }
+    ]);
+  });
+
+  test('[Structure Matching] negative lookbehind filter expression, shorthand for filter expression followed by delete expression operation without key or (-{}), partial remove "-" (DELETE), implementation is free to chose to warn or err if not found', function() {
+    var results = jpql.parse('$..book[?<!{@}][invalid, deprecated, obsolete]'); //equivalent to $..book[?(!@.invalid && !@.deprecated && !@.onbsolete )]
+    assert.deepEqual(results, [
+      {
+        "expression": {
+          "type": "root",
+          "value": "$"
+        }
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "book"
+        },
+        "operation": "member",
+        "scope": "descendant"
+      },
+      {
+        "expression": {
+          "active": {
+            "filter": {
+              "flag": "<!",
+              "script": "{@}",
+              "value": "?<!{@}"
+            },
+            "stream": {},
+            "value": "?<!{@}"
+          },
+          "type": "filter_expression|active",
+          "value": "({@})"
+        },
+        "operation": "subscript",
+        "scope": "child"
+      },
+      {
+        "expression": {
+          "type": "union",
+          "value": [
+            {
+              "expression": {
+                "type": "identifier",
+                "value": "invalid"
+              }
+            },
+            {
+              "expression": {
+                "type": "identifier",
+                "value": "deprecated"
+              }
+            },
+            {
+              "expression": {
+                "type": "identifier",
+                "value": "obsolete"
+              }
+            }
+          ]
+        },
+        "operation": "subscript",
+        "scope": "child"
+      }
+    ]);
   });
 
   test('regex path component', function() {
