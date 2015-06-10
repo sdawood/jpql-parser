@@ -11,7 +11,7 @@
 
 %lex
 
-DDecimalDigit [0-9]
+DecimalDigit [0-9]
 DecimalDigits [0-9]+
 NonZeroDigit [1-9]
 OctalDigit [0-7]
@@ -54,8 +54,8 @@ RegularExpressionLiteral {RegularExpressionBody}\/{RegularExpressionFlags}
 
 /*DATATAZ macros*/
 
-QQString                                                        \\"(?:\[\\"bfnrt/\]|\u[a-fA-F0-9]{4}|[^\"\])*\\"
-QString                                                         \\'(?:\[\\'\\bfnrt/\]|\u[a-fA-F0-9]{4}|[^\'\])*\\'
+QQString                                                        \\"(?:\[\\"bfnrt/\]|\u[a-fA-F0-9]{4}|[^\"\])*\\" /* (\"{DoubleStringCharacter}*\") */
+QString                                                         \\'(?:\[\\'\\bfnrt/\]|\u[a-fA-F0-9]{4}|[^\'\])*\\' /* (\'{SingleStringCharacter}*\') */
 Tag                                                             (#){Identifier}?
 AsyncTake                                                       (@)(\({SignedInteger}?\))?
 /* (map, (post or put), put, post, merge, delete, splat) */
@@ -68,31 +68,37 @@ ScriptExpressionToken                                           \(.+?\)(?=[\:\[\
 FilterExpressionToken                                           \?\(.+?\)(?=[\:\[\]\,\{\}\.]|$)
 
 /*lex rules*/
-%x REGEXP
+
+/* %x REGEXP */
+%options flex
 
 %%
-<REGEXP>{RegularExpressionLiteral} %{
-                                        this.begin('INITIAL');
-                                        return 'RegularExpressionLiteral';
-                                   %}
+
+/* <REGEXP>{RegularExpressionLiteral} %{                            */
+/*                                         this.begin('INITIAL');   */
+/*                                         return 'REGEXP_LITERAL'; */
+/*                                    %}                            */
+
 /* DATA TAZ LEX RULES */
 \s+                                                             {/* skip white spaces */}
 \$(?![\$a-zA-Z0-9_])                                            return 'DOLLAR_TOKEN';
 @\$(?![\$a-zA-Z0-9_])                                           return 'ACTIVE_ROOT_TOKEN';
 \.\.                                                            return 'DOT_DOT';
 \.                                                              return 'DOT';
-\*                                                              return 'STAR_TOKEN';
-'true'                                                          return 'TRUE_TOKEN';
-'false'                                                         return 'FALSE_TOKEN';/* {ReservedKeywords}                                              throw new Error('Illegal keyword: ' + yytext) */
-'null'                                                          return 'NULL_TOKEN';
-'undefined'                                                     return 'UNDEFINED_TOKEN';
+\*                                                              return yytext.toUpperCase() + '_TOKEN';
+'true'                                                          return yytext.toUpperCase() + '_TOKEN';
+'false'                                                         return yytext.toUpperCase() + '_TOKEN';
+'null'                                                          return yytext.toUpperCase() + '_TOKEN';
+'undefined'                                                     return yytext.toUpperCase() + '_TOKEN';
+/* {ReservedKeywords}                                              throw new Error('Illegal keyword: ' + yytext) */
+/* script data pipe chain would be implemented as script:script:script:script... */
 {ActiveScriptExpressionToken}(\:{ActiveScriptExpressionToken})? %{
                                                                    yytext =
                                                                        {
                                                                          value: yy.lexer.matches[0],
                                                                          map: {
                                                                            value: yy.lexer.matches[1],
-                                                                           tag: yy.lexer.matches[3], //one tag or allow multiple?
+                                                                           tag: yy.lexer.matches[3], /* one tag or allow multiple? */
                                                                            label: yy.lexer.matches[4],
                                                                            async: yy.lexer.matches[16],
                                                                            take: yy.lexer.matches[18],
@@ -143,34 +149,34 @@ FilterExpressionToken                                           \?\(.+?\)(?=[\:\
                                                                     return 'ACTIVE_FILTER_EXPRESSION_TOKEN';
                                                                 %}
 
-{RegularExpressionLiteral}(\:{ActiveScriptExpressionToken})?    %{
-                                                                    yytext =
-                                                                     {
-                                                                       value: yy.lexer.matches[0],
-                                                                       filter: {
-                                                                         value: yy.lexer.matches[1],
-                                                                         tag: yy.lexer.matches[3],
-                                                                         label: yy.lexer.matches[4],
-                                                                         async: yy.lexer.matches[16],
-                                                                         take: yy.lexer.matches[18],
-                                                                         operation: yy.lexer.matches[19],
-                                                                         provider: yy.lexer.matches[20],
-                                                                         script: yy.lexer.matches[21]
-                                                                       },
-                                                                       stream: {
-                                                                         value: yy.lexer.matches[23],
-                                                                         tag: yy.lexer.matches[25],
-                                                                         label: yy.lexer.matches[26],
-                                                                         async: yy.lexer.matches[38],
-                                                                         take: yy.lexer.matches[40],
-                                                                         operation: yy.lexer.matches[41],
-                                                                         provider: yy.lexer.matches[42],
-                                                                         script: yy.lexer.matches[43]
-                                                                       }
-                                                                     };
-                                                                    return 'ACTIVE_FILTER_EXPRESSION_TOKEN';
-                                                                %}
-
+/* {RegularExpressionLiteral}(\:{ActiveScriptExpressionToken})?    %{                                           */
+/*                                                                     yytext =                                 */
+/*                                                                      {                                       */
+/*                                                                        value: yy.lexer.matches[0],           */
+/*                                                                        filter: {                             */
+/*                                                                          value: yy.lexer.matches[1],         */
+/*                                                                          tag: yy.lexer.matches[3],           */
+/*                                                                          label: yy.lexer.matches[4],         */
+/*                                                                          async: yy.lexer.matches[16],        */
+/*                                                                          take: yy.lexer.matches[18],         */
+/*                                                                          operation: yy.lexer.matches[19],    */
+/*                                                                          provider: yy.lexer.matches[20],     */
+/*                                                                          script: yy.lexer.matches[21]        */
+/*                                                                        },                                    */
+/*                                                                        stream: {                             */
+/*                                                                          value: yy.lexer.matches[23],        */
+/*                                                                          tag: yy.lexer.matches[25],          */
+/*                                                                          label: yy.lexer.matches[26],        */
+/*                                                                          async: yy.lexer.matches[38],        */
+/*                                                                          take: yy.lexer.matches[40],         */
+/*                                                                          operation: yy.lexer.matches[41],    */
+/*                                                                          provider: yy.lexer.matches[42],     */
+/*                                                                          script: yy.lexer.matches[43]        */
+/*                                                                        }                                     */
+/*                                                                      };                                      */
+/*                                                                     return 'ACTIVE_FILTER_EXPRESSION_TOKEN'; */
+/*                                                                 %}                                           */
+/*                                                                                                              */
 {Identifier}                                                                                return 'IDENTIFIER_NAME';
 ({DecimalIntegerLiteral})?\:({DecimalIntegerLiteral})?(\:({DecimalIntegerLiteral})?)?       return 'ARRAY_SLICE_TOKEN';
 {ScriptExpressionToken}?\:{ScriptExpressionToken}?(\:{ScriptExpressionToken}?)?             %{
@@ -180,7 +186,7 @@ FilterExpressionToken                                           \?\(.+?\)(?=[\:\
 \[|\{                                                                                       return '[';         /* Beta1, square or curvy */
 \]|\}                                                                                       return ']';         /* Beta1, square or curvy */
 ','                                                                                         return 'COMMA_TOKEN';
-{DecimalIntegerLiteral}                                                                     return 'INTEGER_TOKEN';
+{DecimalIntegerLiteral}                                                                     return 'INTEGER';
 {QQString}                                                                                  %{ yytext = yytext.substr(1,yyleng-2); return 'QQ_STRING'; %}
 {QString}                                                                                   %{ yytext = yytext.substr(1,yyleng-2); return 'Q_STRING'; %}
 {ScriptExpressionToken}                                                                     return 'SCRIPT_EXPRESSION_TOKEN'
@@ -188,55 +194,43 @@ FilterExpressionToken                                           \?\(.+?\)(?=[\:\
 
 /* ecmascript rules from https://github.com/cjihrig/jsparser/blob/myy.ast.r/ecmascript.jison */
 
-/* {StringLiteral}                                                                          return 'STRING_LITERAL'; */
-'break'                                                                                     return 'break_keyword_token'.toUpperCase();
-'case'                                                                                      return 'case_keyword_token'.toUpperCase();
-'catch'                                                                                     return 'catch_keyword_token'.toUpperCase();
-'continue'                                                                                  return 'continue_keyword_token'.toUpperCase();
-'debugger'                                                                                  return 'debugger_keyword_token'.toUpperCase();
-'default'                                                                                   return 'default_keyword_token'.toUpperCase();
-'delete'                                                                                    return 'delete_keyword_token'.toUpperCase();
-'do'                                                                                        return 'do_keyword_token'.toUpperCase();
-'else'                                                                                      return 'else_keyword_token'.toUpperCase();
-'finally'                                                                                   return 'finally_keyword_token'.toUpperCase();
-'for'                                                                                       return 'for_keyword_token'.toUpperCase();
-'function'                                                                                  return 'function_keyword_token'.toUpperCase();
-'if'                                                                                        return 'if_keyword_token'.toUpperCase();
-'in'                                                                                        return 'in_keyword_token'.toUpperCase();
-'instanceof'                                                                                return 'instanceof_keyword_token'.toUpperCase();
-'new'                                                                                       return 'new_keyword_token'.toUpperCase();
-'return'                                                                                    return 'return_keyword_token'.toUpperCase();
-'switch'                                                                                    return 'switch_keyword_token'.toUpperCase();
-'this'                                                                                      return 'this_keyword_token'.toUpperCase();
-'throw'                                                                                     return 'throw_keyword_token'.toUpperCase();
-'try'                                                                                       return 'try_keyword_token'.toUpperCase();
-'typeof'                                                                                    return 'typeof_keyword_token'.toUpperCase();
-'var'                                                                                       return 'var_keyword_token'.toUpperCase();
-'void'                                                                                      return 'void_keyword_token'.toUpperCase();
-'while'                                                                                     return 'while_keyword_token'.toUpperCase();
-'with'                                                                                      return 'with_keyword_token'.toUpperCase();
-'class'                                                                                     return 'class_keyword_token'.toUpperCase();
-'const'                                                                                     return 'const_keyword_token'.toUpperCase();
-'enum'                                                                                      return 'enum_keyword_token'.toUpperCase();
-'export'                                                                                    return 'export_keyword_token'.toUpperCase();
-'extends'                                                                                   return 'extends_keyword_token'.toUpperCase();
-'import'                                                                                    return 'import_keyword_token'.toUpperCase();
-'super'                                                                                     return 'super_keyword_token'.toUpperCase();
-/*{Identifier}                                                                              return 'IDENTIFIER';*/
-/*{DecimalLiteral}                                                                          return 'NUMERIC_LITERAL';*/
-/*{HexIntegerLiteral}                                                                       return 'NUMERIC_LITERAL';*/
-/*{OctalIntegerLiteral}                                                                     return 'NUMERIC_LITERAL';*/
-/*'{'                                                                                       return '{'; */
-/*'}'                                                                                       return '}'; */
-/*'('                                                                                       return '('; */
-/*')'                                                                                       return ')'; */
-/*'['                                                                                       return '['; */
-/*']'                                                                                       return ']'; */
+'break'                                                                                     throw new Error('Illegal keyword: ' + yytext);
+'case'                                                                                      throw new Error('Illegal keyword: ' + yytext);
+'catch'                                                                                     throw new Error('Illegal keyword: ' + yytext);
+'continue'                                                                                  throw new Error('Illegal keyword: ' + yytext);
+'debugger'                                                                                  throw new Error('Illegal keyword: ' + yytext);
+'default'                                                                                   throw new Error('Illegal keyword: ' + yytext);
+'delete'                                                                                    throw new Error('Illegal keyword: ' + yytext);
+'do'                                                                                        throw new Error('Illegal keyword: ' + yytext);
+'else'                                                                                      throw new Error('Illegal keyword: ' + yytext);
+'finally'                                                                                   throw new Error('Illegal keyword: ' + yytext);
+'for'                                                                                       throw new Error('Illegal keyword: ' + yytext);
+'function'                                                                                  throw new Error('Illegal keyword: ' + yytext);
+'if'                                                                                        throw new Error('Illegal keyword: ' + yytext);
+'in'                                                                                        throw new Error('Illegal keyword: ' + yytext);
+'instanceof'                                                                                throw new Error('Illegal keyword: ' + yytext);
+'new'                                                                                       throw new Error('Illegal keyword: ' + yytext);
+'return'                                                                                    throw new Error('Illegal keyword: ' + yytext);
+'switch'                                                                                    throw new Error('Illegal keyword: ' + yytext);
+'this'                                                                                      throw new Error('Illegal keyword: ' + yytext);
+'throw'                                                                                     throw new Error('Illegal keyword: ' + yytext);
+'try'                                                                                       throw new Error('Illegal keyword: ' + yytext);
+'typeof'                                                                                    throw new Error('Illegal keyword: ' + yytext);
+'var'                                                                                       throw new Error('Illegal keyword: ' + yytext);
+'void'                                                                                      throw new Error('Illegal keyword: ' + yytext);
+'while'                                                                                     throw new Error('Illegal keyword: ' + yytext);
+'with'                                                                                      throw new Error('Illegal keyword: ' + yytext);
+'class'                                                                                     throw new Error('Illegal keyword: ' + yytext);
+'const'                                                                                     throw new Error('Illegal keyword: ' + yytext);
+'enum'                                                                                      throw new Error('Illegal keyword: ' + yytext);
+'export'                                                                                    throw new Error('Illegal keyword: ' + yytext);
+'extends'                                                                                   throw new Error('Illegal keyword: ' + yytext);
+'import'                                                                                    throw new Error('Illegal keyword: ' + yytext);
+'super'                                                                                     throw new Error('Illegal keyword: ' + yytext);
 
 /* RESERVED OPERATORS */
 /* '.'                                                                                      return 'RESERVED_OPERATOR_TOKEN'; */
 /* ';'                                                                                      return 'RESERVED_OPERATOR_TOKEN'; */
-/* ','                                                                                      return 'COMMA_TOKEN';             */
 /* '?'                                                                                      return 'RESERVED_OPERATOR_TOKEN'; */
 /* ':'                                                                                      return 'RESERVED_OPERATOR_TOKEN'; */
 /* '==='                                                                                    return 'RESERVED_OPERATOR_TOKEN'; */
@@ -333,12 +327,11 @@ DESCENDANT_MEMBER_COMPONENT
 MEMBER_EXPRESSION
     : STAR
     | ACTIVE_SCRIPT_EXPRESSION  -> $1
-    | ACTIVE_REGEXP_EXPRESSION  -> $1
     | ACTIVE_FILTER_EXPRESSION  -> $1
     | IDENTIFIER                -> $1
     | SCRIPT_EXPRESSION         -> $1
     | INTEGER                   -> $1
-    | END
+    | END                       { /* ? */ }
     ;
 
 /*
@@ -407,7 +400,6 @@ SUBSCRIPT_ACTIVE_EXPRESSION_LISTABLE
     : DOLLAR                        -> $1
     | ACTIVE_ROOT                   -> $1
     | STAR                          -> $1
-    | ACTIVE_REGEXP_EXPRESSION      -> $1
     | ACTIVE_SCRIPT_EXPRESSION      -> $1
     | ACTIVE_FILTER_EXPRESSION      -> $1
     | ACTIVE_SLICE                  -> $1
@@ -472,53 +464,63 @@ SCRIPT_EXPRESSION
 
 ACTIVE_SCRIPT_EXPRESSION
     : ACTIVE_SCRIPT_EXPRESSION_TOKEN                                        {
-                                                                            	 $$ = { expression: { type: 'script_expression|active', value: '(' + $1.map.script + ')', active: $1} }; yy.ast.node($$);
+                                                                            	 $$ = { expression: { type: 'script_expression|active', value: '(' + $1.map.script + ')', active: $1} };
+                                                                                 yy.ast.node($$);
                                                                             }
     ;
 
 ACTIVE_FILTER_EXPRESSION
     : ACTIVE_FILTER_EXPRESSION_TOKEN                                        {
-                                                                            	 $$ = { expression: { type: 'filter_expression|active', value: '(' + $1.filter.script + ')', active: $1} }; yy.ast.node($$);
+                                                                            	 $$ = { expression: { type: 'filter_expression|active', value: '(' + $1.filter.script + ')', active: $1} };
+                                                                                 yy.ast.node($$);
                                                                             }
     ;
 
 
 FILTER_EXPRESSION
     : FILTER_EXPRESSION_TOKEN                                               {
-                                                                            	 $$ = { expression: { type: 'filter_expression', value: $1 } }; yy.ast.node($$);
+                                                                            	 $$ = { expression: { type: 'filter_expression', value: $1 } };
+                                                                                 yy.ast.node($$);
                                                                             }
     ;
 
 ACTIVE_SLICE
     : ACTIVE_SLICE_TOKEN                                                    {
-                                                                            	 $$ = { expression: { type: 'slice|active', value: $1 } }; yy.ast.node($$);
+                                                                            	 $$ = { expression: { type: 'slice|active', value: $1 } };
+                                                                                 yy.ast.node($$);
                                                                             }
     ;
 
 ARRAY_SLICE
     : ARRAY_SLICE_TOKEN                                                     {
-                                                                            	 $$ = { expression: { type: 'slice', value: $1 } }; yy.ast.node($$);
+                                                                            	 $$ = { expression: { type: 'slice', value: $1 } };
+                                                                                 yy.ast.node($$);
                                                                             }
     ;
 
 IDENTIFIER
     : IDENTIFIER_NAME                                                       {
-                                                                            	 $$ = { expression: { type: 'identifier', value: $1 } }; yy.ast.node($$);
+                                                                            	 $$ = { expression: { type: 'identifier', value: $1 } };
+                                                                                 yy.ast.node($$);
                                                                             }
     ;
 
 ReservedWord
     : TRUE_TOKEN                                                            {
-                                                                            	 $$ = { expression: { type: 'keyword', value: true } }; yy.ast.node($$);
+                                                                            	 $$ = { expression: { type: 'keyword', value: true } };
+                                                                                 yy.ast.node($$);
                                                                             }
     | FALSE_TOKEN                                                           {
-                                                                                $$ = { expression: { type: 'keyword', value: false } }; yy.ast.node($$);
+                                                                                $$ = { expression: { type: 'keyword', value: false } };
+                                                                                yy.ast.node($$);
                                                                             }
     | NULL_TOKEN                                                            {
-                                                                                $$ = { expression: { type: 'keyword', value: null } }; yy.ast.node($$);
+                                                                                $$ = { expression: { type: 'keyword', value: null } };
+                                                                                yy.ast.node($$);
                                                                             }
     | UNDEFINED_TOKEN                                                       {
-                                                                                $$ = { expression: { type: 'keyword', value: null } }; yy.ast.node($$);
+                                                                                $$ = { expression: { type: 'keyword', value: null } };
+                                                                                yy.ast.node($$);
                                                                             } /** undefined upsets the logic and removes the expression.value */
     ;
 
@@ -535,35 +537,22 @@ ReservedWord
 
 STRING_LITERAL
     : QQ_STRING                                                             {
-                                                                            	 $$ = { expression: { type: 'string_literal', value: yy.ast.unescapeDoubleQuotes($1), meta: '""' } }; yy.ast.set($$);
+                                                                            	 $$ = { expression: { type: 'string_literal', value: yy.ast.unescapeDoubleQuotes($1), meta: '""' } };
+                                                                                 yy.ast.set($$);
                                                                             }
     | Q_STRING                                                              {
-                                                                            	 $$ = { expression: { type: 'string_literal', value: yy.ast.unescapeSingleQuotes($1), meta: '\'\'' } }; yy.ast.set($$);
+                                                                            	 $$ = { expression: { type: 'string_literal', value: yy.ast.unescapeSingleQuotes($1), meta: '\'\'' } };
+                                                                                 yy.ast.set($$);
                                                                             }
     ;
 
 INTEGER
     : INTEGER_TOKEN                                                         {
-                                                                                $$ = { expression: { type: 'numeric_literal', value: parseInt($1) } }; yy.ast.node($$)
+                                                                                $$ = { expression: { type: 'numeric_literal', value: parseInt($1) } };
+                                                                                yy.ast.node($$)
                                                                             }
     ;
 
-RegularExpressionLiteral
-    : RegularExpressionLiteralBegin REGEXP_LITERAL
-                                                                            {
-                                                                                $$ = yy.ast.parseRegularExpressionLiteral($1 + $2);
-                                                                            }
-    ;
-
-RegularExpressionLiteralBegin
-    : '/'
-                                                                            {
-                                                                                yy.lexer.begin('REGEXP');
-                                                                            }
-    | '/='
-                                                                            {
-                                                                                yy.lexer.begin('REGEXP');
-                                                                            }
-    ;
+%
 
 

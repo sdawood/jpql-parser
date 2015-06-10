@@ -52,12 +52,11 @@ DESCENDANT_MEMBER_COMPONENT
 MEMBER_EXPRESSION
     : STAR
     | ACTIVE_SCRIPT_EXPRESSION  -> $1
-    | ACTIVE_REGEXP_EXPRESSION  -> $1
     | ACTIVE_FILTER_EXPRESSION  -> $1
     | IDENTIFIER                -> $1
     | SCRIPT_EXPRESSION         -> $1
     | INTEGER                   -> $1
-    | END
+    | END                       { /* ? */ }
     ;
 
 /*
@@ -126,7 +125,6 @@ SUBSCRIPT_ACTIVE_EXPRESSION_LISTABLE
     : DOLLAR                        -> $1
     | ACTIVE_ROOT                   -> $1
     | STAR                          -> $1
-    | ACTIVE_REGEXP_EXPRESSION      -> $1
     | ACTIVE_SCRIPT_EXPRESSION      -> $1
     | ACTIVE_FILTER_EXPRESSION      -> $1
     | ACTIVE_SLICE                  -> $1
@@ -191,53 +189,63 @@ SCRIPT_EXPRESSION
 
 ACTIVE_SCRIPT_EXPRESSION
     : ACTIVE_SCRIPT_EXPRESSION_TOKEN                                        {
-                                                                            	 $$ = { expression: { type: 'script_expression|active', value: '(' + $1.map.script + ')', active: $1} }; yy.ast.node($$);
+                                                                            	 $$ = { expression: { type: 'script_expression|active', value: '(' + $1.map.script + ')', active: $1} };
+                                                                                 yy.ast.node($$);
                                                                             }
     ;
 
 ACTIVE_FILTER_EXPRESSION
     : ACTIVE_FILTER_EXPRESSION_TOKEN                                        {
-                                                                            	 $$ = { expression: { type: 'filter_expression|active', value: '(' + $1.filter.script + ')', active: $1} }; yy.ast.node($$);
+                                                                            	 $$ = { expression: { type: 'filter_expression|active', value: '(' + $1.filter.script + ')', active: $1} };
+                                                                                 yy.ast.node($$);
                                                                             }
     ;
 
 
 FILTER_EXPRESSION
     : FILTER_EXPRESSION_TOKEN                                               {
-                                                                            	 $$ = { expression: { type: 'filter_expression', value: $1 } }; yy.ast.node($$);
+                                                                            	 $$ = { expression: { type: 'filter_expression', value: $1 } };
+                                                                                 yy.ast.node($$);
                                                                             }
     ;
 
 ACTIVE_SLICE
     : ACTIVE_SLICE_TOKEN                                                    {
-                                                                            	 $$ = { expression: { type: 'slice|active', value: $1 } }; yy.ast.node($$);
+                                                                            	 $$ = { expression: { type: 'slice|active', value: $1 } };
+                                                                                 yy.ast.node($$);
                                                                             }
     ;
 
 ARRAY_SLICE
     : ARRAY_SLICE_TOKEN                                                     {
-                                                                            	 $$ = { expression: { type: 'slice', value: $1 } }; yy.ast.node($$);
+                                                                            	 $$ = { expression: { type: 'slice', value: $1 } };
+                                                                                 yy.ast.node($$);
                                                                             }
     ;
 
 IDENTIFIER
     : IDENTIFIER_NAME                                                       {
-                                                                            	 $$ = { expression: { type: 'identifier', value: $1 } }; yy.ast.node($$);
+                                                                            	 $$ = { expression: { type: 'identifier', value: $1 } };
+                                                                                 yy.ast.node($$);
                                                                             }
     ;
 
 ReservedWord
     : TRUE_TOKEN                                                            {
-                                                                            	 $$ = { expression: { type: 'keyword', value: true } }; yy.ast.node($$);
+                                                                            	 $$ = { expression: { type: 'keyword', value: true } };
+                                                                                 yy.ast.node($$);
                                                                             }
     | FALSE_TOKEN                                                           {
-                                                                                $$ = { expression: { type: 'keyword', value: false } }; yy.ast.node($$);
+                                                                                $$ = { expression: { type: 'keyword', value: false } };
+                                                                                yy.ast.node($$);
                                                                             }
     | NULL_TOKEN                                                            {
-                                                                                $$ = { expression: { type: 'keyword', value: null } }; yy.ast.node($$);
+                                                                                $$ = { expression: { type: 'keyword', value: null } };
+                                                                                yy.ast.node($$);
                                                                             }
     | UNDEFINED_TOKEN                                                       {
-                                                                                $$ = { expression: { type: 'keyword', value: null } }; yy.ast.node($$);
+                                                                                $$ = { expression: { type: 'keyword', value: null } };
+                                                                                yy.ast.node($$);
                                                                             } /** undefined upsets the logic and removes the expression.value */
     ;
 
@@ -254,35 +262,22 @@ ReservedWord
 
 STRING_LITERAL
     : QQ_STRING                                                             {
-                                                                            	 $$ = { expression: { type: 'string_literal', value: yy.ast.unescapeDoubleQuotes($1), meta: '""' } }; yy.ast.set($$);
+                                                                            	 $$ = { expression: { type: 'string_literal', value: yy.ast.unescapeDoubleQuotes($1), meta: '""' } };
+                                                                                 yy.ast.set($$);
                                                                             }
     | Q_STRING                                                              {
-                                                                            	 $$ = { expression: { type: 'string_literal', value: yy.ast.unescapeSingleQuotes($1), meta: '\'\'' } }; yy.ast.set($$);
+                                                                            	 $$ = { expression: { type: 'string_literal', value: yy.ast.unescapeSingleQuotes($1), meta: '\'\'' } };
+                                                                                 yy.ast.set($$);
                                                                             }
     ;
 
 INTEGER
     : INTEGER_TOKEN                                                         {
-                                                                                $$ = { expression: { type: 'numeric_literal', value: parseInt($1) } }; yy.ast.node($$)
+                                                                                $$ = { expression: { type: 'numeric_literal', value: parseInt($1) } };
+                                                                                yy.ast.node($$)
                                                                             }
     ;
 
-RegularExpressionLiteral
-    : RegularExpressionLiteralBegin REGEXP_LITERAL
-                                                                            {
-                                                                                $$ = yy.ast.parseRegularExpressionLiteral($1 + $2);
-                                                                            }
-    ;
-
-RegularExpressionLiteralBegin
-    : '/'
-                                                                            {
-                                                                                yy.lexer.begin('REGEXP');
-                                                                            }
-    | '/='
-                                                                            {
-                                                                                yy.lexer.begin('REGEXP');
-                                                                            }
-    ;
+%
 
 
