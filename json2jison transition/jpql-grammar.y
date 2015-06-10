@@ -1,6 +1,7 @@
 /* jsonpathql parser */
 
 /* Code blocks are inserted at the top of the generated module. */
+/* include ";" terminators if a comment would follow the expression on the same line, otherwise, it's automatically inserted */
 %{
     var ast = require('./ast');
 %}
@@ -33,7 +34,7 @@ PATH_COMPONENT
 
 NESTED_PATH_COMPONENT
     : MEMBER_COMPONENT    ->  [ yy.ast.merge($1, { operation: 'member' }) ]; /* don't push the branch into the level-1 expressions */
-    | SUBSCRIPT_COMPONENT ->  [ yy.ast.merge($1, { operation: 'subscript' }) ];
+    | SUBSCRIPT_COMPONENT ->  [ yy.ast.merge($1, { operation: 'subscript' }) ]
     ;
 
 MEMBER_COMPONENT
@@ -42,15 +43,15 @@ MEMBER_COMPONENT
     ;
 
 CHILD_MEMBER_COMPONENT
-    : DOT MEMBER_EXPRESSION -> yy.ast.merge($2, { scope: 'child' });
+    : DOT MEMBER_EXPRESSION -> yy.ast.merge($2, { scope: 'child' })
     ;
 
 LEADING_CHILD_MEMBER_EXPRESSION
-    : MEMBER_EXPRESSION ->  yy.ast.set({ scope: 'child', operation: 'member' });
+    : MEMBER_EXPRESSION ->  yy.ast.set({ scope: 'child', operation: 'member' })
     ;
 
 DESCENDANT_MEMBER_COMPONENT
-    : DOT_DOT MEMBER_EXPRESSION ->  yy.ast.merge($2, { scope: 'descendant' });
+    : DOT_DOT MEMBER_EXPRESSION ->  yy.ast.merge($2, { scope: 'descendant' })
     ;
 
 MEMBER_EXPRESSION

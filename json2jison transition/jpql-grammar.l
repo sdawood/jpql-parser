@@ -68,7 +68,6 @@ ActiveFilterExpressionToken                                     \?(?!\()\s*{Tag}
 ScriptExpressionToken                                           \(.+?\)(?=[\:\[\]\,\{\}\.]|$)
 FilterExpressionToken                                           \?\(.+?\)(?=[\:\[\]\,\{\}\.]|$)
 
-%options flex
 %%
 
 \s+                                                             /* ignore */
@@ -269,5 +268,3 @@ FilterExpressionToken                                           \?\(.+?\)(?=[\:\
 /* Begin Lexer Customization Methods */
 var ast = {};
 /* End Lexer Customization Methods */
-
-/lex

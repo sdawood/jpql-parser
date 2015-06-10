@@ -55,7 +55,7 @@
       ],
       [
         "SUBSCRIPT_COMPONENT",
-        "$$ =  [ yy.ast.merge($1, { operation: 'subscript' }) ];;"
+        "$$ =  [ yy.ast.merge($1, { operation: 'subscript' }) ];"
       ]
     ],
     "MEMBER_COMPONENT": [
@@ -71,19 +71,19 @@
     "CHILD_MEMBER_COMPONENT": [
       [
         "DOT MEMBER_EXPRESSION",
-        "$$ = yy.ast.merge($2, { scope: 'child' });;"
+        "$$ = yy.ast.merge($2, { scope: 'child' });"
       ]
     ],
     "LEADING_CHILD_MEMBER_EXPRESSION": [
       [
         "MEMBER_EXPRESSION",
-        "$$ =  yy.ast.set({ scope: 'child', operation: 'member' });;"
+        "$$ =  yy.ast.set({ scope: 'child', operation: 'member' });"
       ]
     ],
     "DESCENDANT_MEMBER_COMPONENT": [
       [
         "DOT_DOT MEMBER_EXPRESSION",
-        "$$ =  yy.ast.merge($2, { scope: 'descendant' });;"
+        "$$ =  yy.ast.merge($2, { scope: 'descendant' });"
       ]
     ],
     "MEMBER_EXPRESSION": [
@@ -403,19 +403,19 @@
         "return 'STAR_TOKEN';"
       ],
       [
-        "true",
+        "true\\b",
         "return yytext.toUpperCase() + '_TOKEN';"
       ],
       [
-        "false",
+        "false\\b",
         "return yytext.toUpperCase() + '_TOKEN';"
       ],
       [
-        "null",
+        "null\\b",
         "return yytext.toUpperCase() + '_TOKEN';"
       ],
       [
-        "undefined",
+        "undefined\\b",
         "return yytext.toUpperCase() + '_TOKEN';"
       ],
       [
@@ -471,140 +471,139 @@
         " yytext = yy.lexer.matches; return 'FILTER_EXPRESSION_TOKEN'; "
       ],
       [
-        "break",
+        "break\\b",
         "throw new Error('Illegal keyword: ' + yytext);"
       ],
       [
-        "case",
+        "case\\b",
         "throw new Error('Illegal keyword: ' + yytext);"
       ],
       [
-        "catch",
+        "catch\\b",
         "throw new Error('Illegal keyword: ' + yytext);"
       ],
       [
-        "continue",
+        "continue\\b",
         "throw new Error('Illegal keyword: ' + yytext);"
       ],
       [
-        "debugger",
+        "debugger\\b",
         "throw new Error('Illegal keyword: ' + yytext);"
       ],
       [
-        "default",
+        "default\\b",
         "throw new Error('Illegal keyword: ' + yytext);"
       ],
       [
-        "delete",
+        "delete\\b",
         "throw new Error('Illegal keyword: ' + yytext);"
       ],
       [
-        "do",
+        "do\\b",
         "throw new Error('Illegal keyword: ' + yytext);"
       ],
       [
-        "else",
+        "else\\b",
         "throw new Error('Illegal keyword: ' + yytext);"
       ],
       [
-        "finally",
+        "finally\\b",
         "throw new Error('Illegal keyword: ' + yytext);"
       ],
       [
-        "for",
+        "for\\b",
         "throw new Error('Illegal keyword: ' + yytext);"
       ],
       [
-        "function",
+        "function\\b",
         "throw new Error('Illegal keyword: ' + yytext);"
       ],
       [
-        "if",
+        "if\\b",
         "throw new Error('Illegal keyword: ' + yytext);"
       ],
       [
-        "in",
+        "in\\b",
         "throw new Error('Illegal keyword: ' + yytext);"
       ],
       [
-        "instanceof",
+        "instanceof\\b",
         "throw new Error('Illegal keyword: ' + yytext);"
       ],
       [
-        "new",
+        "new\\b",
         "throw new Error('Illegal keyword: ' + yytext);"
       ],
       [
-        "return",
+        "return\\b",
         "throw new Error('Illegal keyword: ' + yytext);"
       ],
       [
-        "switch",
+        "switch\\b",
         "throw new Error('Illegal keyword: ' + yytext);"
       ],
       [
-        "this",
+        "this\\b",
         "throw new Error('Illegal keyword: ' + yytext);"
       ],
       [
-        "throw",
+        "throw\\b",
         "throw new Error('Illegal keyword: ' + yytext);"
       ],
       [
-        "try",
+        "try\\b",
         "throw new Error('Illegal keyword: ' + yytext);"
       ],
       [
-        "typeof",
+        "typeof\\b",
         "throw new Error('Illegal keyword: ' + yytext);"
       ],
       [
-        "var",
+        "var\\b",
         "throw new Error('Illegal keyword: ' + yytext);"
       ],
       [
-        "void",
+        "void\\b",
         "throw new Error('Illegal keyword: ' + yytext);"
       ],
       [
-        "while",
+        "while\\b",
         "throw new Error('Illegal keyword: ' + yytext);"
       ],
       [
-        "with",
+        "with\\b",
         "throw new Error('Illegal keyword: ' + yytext);"
       ],
       [
-        "class",
+        "class\\b",
         "throw new Error('Illegal keyword: ' + yytext);"
       ],
       [
-        "const",
+        "const\\b",
         "throw new Error('Illegal keyword: ' + yytext);"
       ],
       [
-        "enum",
+        "enum\\b",
         "throw new Error('Illegal keyword: ' + yytext);"
       ],
       [
-        "export",
+        "export\\b",
         "throw new Error('Illegal keyword: ' + yytext);"
       ],
       [
-        "extends",
+        "extends\\b",
         "throw new Error('Illegal keyword: ' + yytext);"
       ],
       [
-        "import",
+        "import\\b",
         "throw new Error('Illegal keyword: ' + yytext);"
       ],
       [
-        "super",
+        "super\\b",
         "throw new Error('Illegal keyword: ' + yytext);"
       ]
     ],
     "macros": {
-      esc: "\\\\",
       "FilterExpressionToken": "\\?\\(.+?\\)(?=[\\:\\[\\]\\,\\{\\}\\.]|$)",
       "ScriptExpressionToken": "\\(.+?\\)(?=[\\:\\[\\]\\,\\{\\}\\.]|$)",
       "ActiveFilterExpressionToken": "\\?(?!\\()\\s*{Tag}?\\s*{AsyncTake}?\\s*{ScriptOperation}?\\s*{Provides}?\\s*(\\{.*?\\})?(?=[\\:\\[\\]\\,\\{\\}\\.]|$)",
@@ -654,9 +653,6 @@
       "DecimalDigit": "[0-9]",
       "lex": ""
     },
-    "moduleInclude": "\n\n/* Begin Lexer Customization Methods */\nvar ast = {};\n/* End Lexer Customization Methods */\n\n/lex",
-    "options": {
-      "flex": true
-    }
+    "moduleInclude": "\n\n/* Begin Lexer Customization Methods */\nvar ast = {};\n/* End Lexer Customization Methods */"
   }
 }
