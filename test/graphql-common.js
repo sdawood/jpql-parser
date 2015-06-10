@@ -367,7 +367,7 @@ suite('graphql#parse-common', function() {
   });
 
   test('parse branches of listable ACTIVE_SLICE subscript expressions with curvey {} subscripts, #slice taz and provider argument (#slice spec should enforce => as type for map script and recommend => as default for the reduce script)', function () {
-    var path = jpql.parse("node{123}{friends{{1:10},(#slice {@length-20}):(=>{@length-10}),100}}");
+    var path = jpql.parse("node{123}{friends{{1:10},(#slice {@length-2000}):(*=>{[@length-1000, 100]})}}");
     assert.deepEqual(path, [
       {
         "expression": {
@@ -416,25 +416,20 @@ suite('graphql#parse-common', function() {
                       "active": {
                         "map": {
                           "label": "slice",
-                          "script": "{@length-20}",
+                          "script": "{@length-2000}",
                           "tag": "#",
-                          "value": "(#slice {@length-20})"
+                          "value": "(#slice {@length-2000})"
                         },
                         "reduce": {
+                          "operation": "*",
                           "provider": "=>",
-                          "script": "{@length-10}",
-                          "value": "(=>{@length-10})"
+                          "script": "{[@length-1000, 100]}",
+                          "value": "(*=>{[@length-1000, 100]})"
                         },
-                        "value": "(#slice {@length-20}):(=>{@length-10})"
+                        "value": "(#slice {@length-2000}):(*=>{[@length-1000, 100]})"
                       },
                       "type": "script_expression|active",
-                      "value": "({@length-20})"
-                    }
-                  },
-                  {
-                    "expression": {
-                      "type": "numeric_literal",
-                      "value": 100
+                      "value": "({@length-2000})"
                     }
                   }
                 ]
