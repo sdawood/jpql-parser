@@ -1,0 +1,229 @@
+{"lex": {
+  "macros": {
+    "esc": "\\\\",
+    "DecimalDigit": "[0-9]",
+    "DecimalDigits": "[0-9]+",
+    "NonZeroDigit": "[1-9]",
+    "OctalDigit": "[0-7]",
+    "HexDigit": "[0-9a-fA-F]",
+    "UnicodeIdentifierStart": "[ªµºÀ-ÖØ-öø-ˁˆ-ˑˠ-ˤˬˮͰ-ʹͶͷͺ-ͽΆΈ-ΊΌΎ-ΡΣ-ϵϷ-ҁҊ-ԧԱ-Ֆՙա-ևא-תװ-ײؠ-يٮٯٱ-ۓەۥۦۮۯۺ-ۼۿܐܒ-ܯݍ-ޥޱߊ-ߪߴߵߺࠀ-ࠕࠚࠤࠨࡀ-ࡘࢠࢢ-ࢬऄ-हऽॐक़-ॡॱ-ॷॹ-ॿঅ-ঌএঐও-নপ-রলশ-হঽৎড়ঢ়য়-ৡৰৱਅ-ਊਏਐਓ-ਨਪ-ਰਲਲ਼ਵਸ਼ਸਹਖ਼-ੜਫ਼ੲ-ੴઅ-ઍએ-ઑઓ-નપ-રલળવ-હઽૐૠૡଅ-ଌଏଐଓ-ନପ-ରଲଳଵ-ହଽଡ଼ଢ଼ୟ-ୡୱஃஅ-ஊஎ-ஐஒ-கஙசஜஞடணதந-பம-ஹௐఅ-ఌఎ-ఐఒ-నప-ళవ-హఽౘౙౠౡಅ-ಌಎ-ಐಒ-ನಪ-ಳವ-ಹಽೞೠೡೱೲഅ-ഌഎ-ഐഒ-ഺഽൎൠൡൺ-ൿඅ-ඖක-නඳ-රලව-ෆก-ะาำเ-ๆກຂຄງຈຊຍດ-ທນ-ຟມ-ຣລວສຫອ-ະາຳຽເ-ໄໆໜ-ໟༀཀ-ཇཉ-ཬྈ-ྌက-ဪဿၐ-ၕၚ-ၝၡၥၦၮ-ၰၵ-ႁႎႠ-ჅჇჍა-ჺჼ-ቈቊ-ቍቐ-ቖቘቚ-ቝበ-ኈኊ-ኍነ-ኰኲ-ኵኸ-ኾዀዂ-ዅወ-ዖዘ-ጐጒ-ጕጘ-ፚᎀ-ᎏᎠ-Ᏼᐁ-ᙬᙯ-ᙿᚁ-ᚚᚠ-ᛪᛮ-ᛰᜀ-ᜌᜎ-ᜑᜠ-ᜱᝀ-ᝑᝠ-ᝬᝮ-ᝰក-ឳៗៜᠠ-ᡷᢀ-ᢨᢪᢰ-ᣵᤀ-ᤜᥐ-ᥭᥰ-ᥴᦀ-ᦫᧁ-ᧇᨀ-ᨖᨠ-ᩔᪧᬅ-ᬳᭅ-ᭋᮃ-ᮠᮮᮯᮺ-ᯥᰀ-ᰣᱍ-ᱏᱚ-ᱽᳩ-ᳬᳮ-ᳱᳵᳶᴀ-ᶿḀ-ἕἘ-Ἕἠ-ὅὈ-Ὅὐ-ὗὙὛὝὟ-ώᾀ-ᾴᾶ-ᾼιῂ-ῄῆ-ῌῐ-ΐῖ-Ίῠ-Ῥῲ-ῴῶ-ῼⁱⁿₐ-ₜℂℇℊ-ℓℕℙ-ℝℤΩℨK-ℭℯ-ℹℼ-ℿⅅ-ⅉⅎⅠ-ↈⰀ-Ⱞⰰ-ⱞⱠ-ⳤⳫ-ⳮⳲⳳⴀ-ⴥⴧⴭⴰ-ⵧⵯⶀ-ⶖⶠ-ⶦⶨ-ⶮⶰ-ⶶⶸ-ⶾⷀ-ⷆⷈ-ⷎⷐ-ⷖⷘ-ⷞⸯ々-〇〡-〩〱-〵〸-〼ぁ-ゖゝ-ゟァ-ヺー-ヿㄅ-ㄭㄱ-ㆎㆠ-ㆺㇰ-ㇿ㐀-䶵一-鿌ꀀ-ꒌꓐ-ꓽꔀ-ꘌꘐ-ꘟꘪꘫꙀ-ꙮꙿ-ꚗꚠ-ꛯꜗ-ꜟꜢ-ꞈꞋ-ꞎꞐ-ꞓꞠ-Ɦꟸ-ꠁꠃ-ꠅꠇ-ꠊꠌ-ꠢꡀ-ꡳꢂ-ꢳꣲ-ꣷꣻꤊ-ꤥꤰ-ꥆꥠ-ꥼꦄ-ꦲꧏꨀ-ꨨꩀ-ꩂꩄ-ꩋꩠ-ꩶꩺꪀ-ꪯꪱꪵꪶꪹ-ꪽꫀꫂꫛ-ꫝꫠ-ꫪꫲ-ꫴꬁ-ꬆꬉ-ꬎꬑ-ꬖꬠ-ꬦꬨ-ꬮꯀ-ꯢ가-힣ힰ-ퟆퟋ-ퟻ豈-舘並-龎ﬀ-ﬆﬓ-ﬗיִײַ-ﬨשׁ-זּטּ-לּמּנּסּףּפּצּ-ﮱﯓ-ﴽﵐ-ﶏﶒ-ﷇﷰ-ﷻﹰ-ﹴﹶ-ﻼＡ-Ｚａ-ｚｦ-ﾾￂ-ￇￊ-ￏￒ-ￗￚ-ￜ]",
+    "UnicodeIdentifierPart": "[ªµºÀ-ÖØ-öø-ˁˆ-ˑˠ-ˤˬˮͰ-ʹͶͷͺ-ͽΆΈ-ΊΌΎ-ΡΣ-ϵϷ-ҁҊ-ԧԱ-Ֆՙա-ևא-תװ-ײؠ-يٮٯٱ-ۓەۥۦۮۯۺ-ۼۿܐܒ-ܯݍ-ޥޱߊ-ߪߴߵߺࠀ-ࠕࠚࠤࠨࡀ-ࡘࢠࢢ-ࢬऄ-हऽॐक़-ॡॱ-ॷॹ-ॿঅ-ঌএঐও-নপ-রলশ-হঽৎড়ঢ়য়-ৡৰৱਅ-ਊਏਐਓ-ਨਪ-ਰਲਲ਼ਵਸ਼ਸਹਖ਼-ੜਫ਼ੲ-ੴઅ-ઍએ-ઑઓ-નપ-રલળવ-હઽૐૠૡଅ-ଌଏଐଓ-ନପ-ରଲଳଵ-ହଽଡ଼ଢ଼ୟ-ୡୱஃஅ-ஊஎ-ஐஒ-கஙசஜஞடணதந-பம-ஹௐఅ-ఌఎ-ఐఒ-నప-ళవ-హఽౘౙౠౡಅ-ಌಎ-ಐಒ-ನಪ-ಳವ-ಹಽೞೠೡೱೲഅ-ഌഎ-ഐഒ-ഺഽൎൠൡൺ-ൿඅ-ඖක-නඳ-රලව-ෆก-ะาำเ-ๆກຂຄງຈຊຍດ-ທນ-ຟມ-ຣລວສຫອ-ະາຳຽເ-ໄໆໜ-ໟༀཀ-ཇཉ-ཬྈ-ྌက-ဪဿၐ-ၕၚ-ၝၡၥၦၮ-ၰၵ-ႁႎႠ-ჅჇჍა-ჺჼ-ቈቊ-ቍቐ-ቖቘቚ-ቝበ-ኈኊ-ኍነ-ኰኲ-ኵኸ-ኾዀዂ-ዅወ-ዖዘ-ጐጒ-ጕጘ-ፚᎀ-ᎏᎠ-Ᏼᐁ-ᙬᙯ-ᙿᚁ-ᚚᚠ-ᛪᛮ-ᛰᜀ-ᜌᜎ-ᜑᜠ-ᜱᝀ-ᝑᝠ-ᝬᝮ-ᝰក-ឳៗៜᠠ-ᡷᢀ-ᢨᢪᢰ-ᣵᤀ-ᤜᥐ-ᥭᥰ-ᥴᦀ-ᦫᧁ-ᧇᨀ-ᨖᨠ-ᩔᪧᬅ-ᬳᭅ-ᭋᮃ-ᮠᮮᮯᮺ-ᯥᰀ-ᰣᱍ-ᱏᱚ-ᱽᳩ-ᳬᳮ-ᳱᳵᳶᴀ-ᶿḀ-ἕἘ-Ἕἠ-ὅὈ-Ὅὐ-ὗὙὛὝὟ-ώᾀ-ᾴᾶ-ᾼιῂ-ῄῆ-ῌῐ-ΐῖ-Ίῠ-Ῥῲ-ῴῶ-ῼⁱⁿₐ-ₜℂℇℊ-ℓℕℙ-ℝℤΩℨK-ℭℯ-ℹℼ-ℿⅅ-ⅉⅎⅠ-ↈⰀ-Ⱞⰰ-ⱞⱠ-ⳤⳫ-ⳮⳲⳳⴀ-ⴥⴧⴭⴰ-ⵧⵯⶀ-ⶖⶠ-ⶦⶨ-ⶮⶰ-ⶶⶸ-ⶾⷀ-ⷆⷈ-ⷎⷐ-ⷖⷘ-ⷞⸯ々-〇〡-〩〱-〵〸-〼ぁ-ゖゝ-ゟァ-ヺー-ヿㄅ-ㄭㄱ-ㆎㆠ-ㆺㇰ-ㇿ㐀-䶵一-鿌ꀀ-ꒌꓐ-ꓽꔀ-ꘌꘐ-ꘟꘪꘫꙀ-ꙮꙿ-ꚗꚠ-ꛯꜗ-ꜟꜢ-ꞈꞋ-ꞎꞐ-ꞓꞠ-Ɦꟸ-ꠁꠃ-ꠅꠇ-ꠊꠌ-ꠢꡀ-ꡳꢂ-ꢳꣲ-ꣷꣻꤊ-ꤥꤰ-ꥆꥠ-ꥼꦄ-ꦲꧏꨀ-ꨨꩀ-ꩂꩄ-ꩋꩠ-ꩶꩺꪀ-ꪯꪱꪵꪶꪹ-ꪽꫀꫂꫛ-ꫝꫠ-ꫪꫲ-ꫴꬁ-ꬆꬉ-ꬎꬑ-ꬖꬠ-ꬦꬨ-ꬮꯀ-ꯢ가-힣ힰ-ퟆퟋ-ퟻ豈-舘並-龎ﬀ-ﬆﬓ-ﬗיִײַ-ﬨשׁ-זּטּ-לּמּנּסּףּפּצּ-ﮱﯓ-ﴽﵐ-ﶏﶒ-ﷇﷰ-ﷻﹰ-ﹴﹶ-ﻼＡ-Ｚａ-ｚｦ-ﾾￂ-ￇￊ-ￏￒ-ￗￚ-ￜ0-9̀-ͯ҃-֑҇-ׇֽֿׁׂׅׄؐ-ًؚ-٩ٰۖ-ۜ۟-۪ۤۧۨ-ۭ۰-۹ܑܰ-݊ަ-ް߀-߉߫-߳ࠖ-࠙ࠛ-ࠣࠥ-ࠧࠩ-࡙࠭-࡛ࣤ-ࣾऀ-ःऺ-़ा-ॏ॑-ॗॢॣ०-९ঁ-ঃ়া-ৄেৈো-্ৗৢৣ০-৯ਁ-ਃ਼ਾ-ੂੇੈੋ-੍ੑ੦-ੱੵઁ-ઃ઼ા-ૅે-ૉો-્ૢૣ૦-૯ଁ-ଃ଼ା-ୄେୈୋ-୍ୖୗୢୣ୦-୯ஂா-ூெ-ைொ-்ௗ௦-௯ఁ-ఃా-ౄె-ైొ-్ౕౖౢౣ౦-౯ಂಃ಼ಾ-ೄೆ-ೈೊ-್ೕೖೢೣ೦-೯ംഃാ-ൄെ-ൈൊ-്ൗൢൣ൦-൯ංඃ්ා-ුූෘ-ෟෲෳัิ-ฺ็-๎๐-๙ັິ-ູົຼ່-ໍ໐-໙༘༙༠-༩༹༵༷༾༿ཱ-྄྆྇ྍ-ྗྙ-ྼ࿆ါ-ှ၀-၉ၖ-ၙၞ-ၠၢ-ၤၧ-ၭၱ-ၴႂ-ႍႏ-ႝ፝-፟ᜒ-᜔ᜲ-᜴ᝒᝓᝲᝳ឴-៓៝០-៩᠋-᠍᠐-᠙ᢩᤠ-ᤫᤰ-᤻᥆-᥏ᦰ-ᧀᧈᧉ᧐-᧙ᨗ-ᨛᩕ-ᩞ᩠-᩿᩼-᪉᪐-᪙ᬀ-ᬄ᬴-᭄᭐-᭙᭫-᭳ᮀ-ᮂᮡ-ᮭ᮰-᮹᯦-᯳ᰤ-᰷᱀-᱉᱐-᱙᳐-᳔᳒-᳨᳭ᳲ-᳴᷀-ᷦ᷼-᷿‌‍‿⁀⁔⃐-⃥⃜⃡-⃰⳯-⵿⳱ⷠ-〪ⷿ-゙゚〯꘠-꘩꙯ꙴ-꙽ꚟ꛰꛱ꠂ꠆ꠋꠣ-ꠧꢀꢁꢴ-꣄꣐-꣙꣠-꣱꤀-꤉ꤦ-꤭ꥇ-꥓ꦀ-ꦃ꦳-꧀꧐-꧙ꨩ-ꨶꩃꩌꩍ꩐-꩙ꩻꪰꪲ-ꪴꪷꪸꪾ꪿꫁ꫫ-ꫯꫵ꫶ꯣ-ꯪ꯬꯭꯰-꯹ﬞ︀-️︠-︦︳︴﹍-﹏０-９＿]",
+    "IdentifierStart": "{UnicodeIdentifierStart}|[$_a-zA-Z]|('\\'[u]{HexDigit}{4})",
+    "IdentifierPart": "{IdentifierStart}|{UnicodeIdentifierPart}|[0-9]",
+    "Identifier": "{IdentifierStart}{IdentifierPart}*",
+    "ExponentIndicator": "[eE]",
+    "SignedInteger": "[+-]?[0-9]+",
+    "DecimalIntegerLiteral": "[+-]?([0]|({NonZeroDigit}{DecimalDigits}*))",
+    "ExponentPart": "{ExponentIndicator}{SignedInteger}",
+    "OctalIntegerLiteral": "[0]{OctalDigit}+",
+    "HexIntegerLiteral": "[0][xX]{HexDigit}+",
+    "DecimalLiteral": "({DecimalIntegerLiteral}\\.{DecimalDigits}*{ExponentPart}?)|(\\.{DecimalDigits}{ExponentPart}?)|({DecimalIntegerLiteral}{ExponentPart}?)",
+    "LineContinuation": "\\(\\r\\n|\\r|\\n)",
+    "OctalEscapeSequence": "(?:[1-7][0-7]{0,2}|[0-7]{2,3})",
+    "HexEscapeSequence": "[x]{HexDigit}{2}",
+    "UnicodeEscapeSequence": "[u]{HexDigit}{4}",
+    "SingleEscapeCharacter": "[\\'\\\"\\\\bfnrtv]",
+    "NonEscapeCharacter": "[^\\'\\\\\"\\\\bfnrtv0-9xu]",
+    "CharacterEscapeSequence": "{SingleEscapeCharacter}|{NonEscapeCharacter}",
+    "EscapeSequence": "{CharacterEscapeSequence}|{OctalEscapeSequence}|{HexEscapeSequence}|{UnicodeEscapeSequence}",
+    "DoubleStringCharacter": "([^\\\"\\n\\r]+)|(\\{EscapeSequence})|{LineContinuation}",
+    "SingleStringCharacter": "([^\\'\\n\\r]+)|(\\{EscapeSequence})|{LineContinuation}",
+    "StringLiteral": "(\"{DoubleStringCharacter}*\")|('{SingleStringCharacter}*')",
+    "RegularExpressionNonTerminator": "[^\\n\\r]",
+    "RegularExpressionBackslashSequence": "\\\\{RegularExpressionNonTerminator}",
+    "RegularExpressionClassChar": "[^\\n\\r\\]\\]|{RegularExpressionBackslashSequence}",
+    "RegularExpressionClass": "\\[{RegularExpressionClassChar}*\\]",
+    "RegularExpressionFlags": "\\b(?!(?:.\\B)*(.)(?:\\B.)*\\1)[gim]?\\b",
+    "RegularExpressionFirstChar": "([^\\n\\r\\*\\\\\\/\\[])|{RegularExpressionBackslashSequence}|{RegularExpressionClass}",
+    "RegularExpressionChar": "([^\\n\\r\\\\\\/\\[])|{RegularExpressionBackslashSequence}|{RegularExpressionClass}",
+    "RegularExpressionBody": "{RegularExpressionFirstChar}{RegularExpressionChar}*",
+    "RegularExpressionLiteral": "{RegularExpressionBody}\\/{RegularExpressionFlags}",
+    "Tag": "(#){Identifier}?",
+    "AsyncTake": "(@)(\\({SignedInteger}?\\))?",
+    "ScriptOperation": "[~=\\+&\\-\\*]*",
+    "Provides": "=>",
+    "ReservedKeywords": "break(?![a-zA-Z0-9_])|case(?![a-zA-Z0-9_])|catch(?![a-zA-Z0-9_])|continue(?![a-zA-Z0-9_])|debugger(?![a-zA-Z0-9_])|default(?![a-zA-Z0-9_])|delete(?![a-zA-Z0-9_])|do(?![a-zA-Z0-9_])|else(?![a-zA-Z0-9_])|finally(?![a-zA-Z0-9_])|for(?![a-zA-Z0-9_])|function(?![a-zA-Z0-9_])|if(?![a-zA-Z0-9_])|in(?![a-zA-Z0-9_])|instanceof(?![a-zA-Z0-9_])|new(?![a-zA-Z0-9_])|return(?![a-zA-Z0-9_])|switch(?![a-zA-Z0-9_])|this(?![a-zA-Z0-9_])|throw(?![a-zA-Z0-9_])|try(?![a-zA-Z0-9_])|typeof(?![a-zA-Z0-9_])|var(?![a-zA-Z0-9_])|void(?![a-zA-Z0-9_])|while(?![a-zA-Z0-9_])|with(?![a-zA-Z0-9_])|class(?![a-zA-Z0-9_])|const(?![a-zA-Z0-9_])|enum(?![a-zA-Z0-9_])|export(?![a-zA-Z0-9_])|extends(?![a-zA-Z0-9_])|import(?![a-zA-Z0-9_])|super(?![a-zA-Z0-9_])",
+    "ActiveScriptExpressionToken": "\\(\\s*{Tag}?\\s*{AsyncTake}?\\s*{ScriptOperation}?\\s*{Provides}?\\s*(\\{.*?\\})?\\)(?=[\\:\\[\\]\\,\\{\\}\\.]|$)",
+    "ActiveFilterExpressionToken": "\\?(?!\\()\\s*{Tag}?\\s*{AsyncTake}?\\s*{ScriptOperation}?\\s*{Provides}?\\s*(\\{.*?\\})?(?=[\\:\\[\\]\\,\\{\\}\\.]|$)",
+    "ScriptExpressionToken": "\\(.+?\\)(?=[\\:\\[\\]\\,\\{\\}\\.]|$)",
+    "FilterExpressionToken": "\\?\\(.+?\\)(?=[\\:\\[\\]\\,\\{\\}\\.]|$)"
+  },
+  "startConditions": {
+    "INITIAL": "// Default initial Jison/Lex context",
+    "IdentifierName": "// IdentifierName"
+  },
+  "rules": [
+    ["\\s+", "/** skip white spaces */"],
+    ["\\$(?![\\$a-zA-Z0-9_])", "return 'DOLLAR_TOKEN'"],
+    ["@\\$(?![\\$a-zA-Z0-9_])", "return 'ACTIVE_ROOT_TOKEN'"],
+    ["\\.\\.", "return 'DOT_DOT'"],
+    ["\\.", "return 'DOT'"],
+    ["\\*", "return 'STAR_TOKEN'"],
+    ["true(?![a-zA-Z0-9_])", "return 'TRUE_TOKEN'"],
+    ["false(?![a-zA-Z0-9_])", "return 'FALSE_TOKEN'"],
+    ["undefined(?![a-zA-Z0-9_])", "return 'UNDEFINED_TOKEN'"],
+    ["null(?![a-zA-Z0-9_])", "return 'NULL_TOKEN'"],
+    ["{ReservedKeywords}", "throw new Error('Illegal keyword: ' + yytext)"],
+    ["{ActiveScriptExpressionToken}(\\:{ActiveScriptExpressionToken})?", "yytext =     {      value: yy.lexer.matches[0],      map: {        value: yy.lexer.matches[1],        tag: yy.lexer.matches[3],        label: yy.lexer.matches[4],        async: yy.lexer.matches[16],        take: yy.lexer.matches[18],        operation: yy.lexer.matches[19],        provider: yy.lexer.matches[20],        script: yy.lexer.matches[21]      },      reduce: {        value: yy.lexer.matches[23],        tag: yy.lexer.matches[25],        label: yy.lexer.matches[26],        async: yy.lexer.matches[38],        take: yy.lexer.matches[40],        operation: yy.lexer.matches[41],        provider: yy.lexer.matches[42],        script: yy.lexer.matches[43]      }    }; return 'ACTIVE_SCRIPT_EXPRESSION_TOKEN'"],
+    ["{ActiveFilterExpressionToken}(\\:{ActiveScriptExpressionToken})?", "yytext =     {      value: yy.lexer.matches[0],      filter: {        value: yy.lexer.matches[1],        tag: yy.lexer.matches[3],        label: yy.lexer.matches[4],        async: yy.lexer.matches[16],        take: yy.lexer.matches[18],        operation: yy.lexer.matches[19],        provider: yy.lexer.matches[20],        script: yy.lexer.matches[21]      },      stream: {        value: yy.lexer.matches[23],        tag: yy.lexer.matches[25],        label: yy.lexer.matches[26],        async: yy.lexer.matches[38],        take: yy.lexer.matches[40],        operation: yy.lexer.matches[41],        provider: yy.lexer.matches[42],        script: yy.lexer.matches[43]      }    }; return 'ACTIVE_FILTER_EXPRESSION_TOKEN'"],
+    ["{Identifier}", "return 'IDENTIFIER_NAME'"],
+    ["({DecimalIntegerLiteral})?\\:({DecimalIntegerLiteral})?(\\:({DecimalIntegerLiteral})?)?", "return 'ARRAY_SLICE'"],
+    ["{ScriptExpressionToken}?\\:{ScriptExpressionToken}?(\\:{ScriptExpressionToken}?)?", "yytext = [ yy.lexer.matches[1], yy.lexer.matches[2], yy.lexer.matches[3] || 1]; return 'ACTIVE_SLICE'"],
+    ["\\[|\\{", "return '['"],
+    ["\\]|\\}", "return ']'"],
+    [",", "return ','"],
+    ["{DecimalIntegerLiteral}", "return 'INTEGER'"],
+    ["\"(?:\\\\[\"bfnrt/\\\\]|\\\\u[a-fA-F0-9]{4}|[^\"\\\\])*\"", "yytext = yytext.substr(1,yyleng-2); return 'QQ_STRING';"],
+    ["'(?:\\\\['bfnrt/\\\\]|\\\\u[a-fA-F0-9]{4}|[^'\\\\])*'", "yytext = yytext.substr(1,yyleng-2); return 'Q_STRING';"],
+    ["{ScriptExpressionToken}", "return 'SCRIPT_EXPRESSION_TOKEN'"],
+    ["{FilterExpressionToken}", "yytest = yy.lexer.matches; return 'FILTER_EXPRESSION_TOKEN'"]
+  ]
+}, "start": "JSON_PATH", "bnf": {
+  "JSON_PATH": [
+    ["DOLLAR", "yy.ast.unshift(); return yy.ast.yield()"],
+    ["ACTIVE_ROOT", "yy.ast.unshift(); return yy.ast.yield()"],
+    ["DOLLAR PATH_COMPONENTS", "yy.ast.set($1); yy.ast.unshift(); return yy.ast.yield()"],
+    ["ACTIVE_ROOT PATH_COMPONENTS", "yy.ast.set($1); yy.ast.unshift(); return yy.ast.yield()"],
+    ["LEADING_CHILD_MEMBER_EXPRESSION", "yy.ast.unshift(); return yy.ast.yield()"],
+    ["LEADING_CHILD_MEMBER_EXPRESSION PATH_COMPONENTS", "yy.ast.set({ operation: \"member\", scope: \"child\", expression: $1.expression}); yy.ast.unshift(); return yy.ast.yield()"],
+    ["PATH_COMPONENTS", "return yy.ast.yield()"]
+  ],
+  "PATH_COMPONENTS": [
+    ["PATH_COMPONENT", ""],
+    ["PATH_COMPONENTS PATH_COMPONENT", ""]
+  ],
+  "PATH_COMPONENT": [
+    ["MEMBER_COMPONENT", "yy.ast.set(yy.ast.merge($1, { operation: \"member\" })); yy.ast.push()"],
+    ["SUBSCRIPT_COMPONENT", "yy.ast.set(yy.ast.merge($1, { operation: \"subscript\" })); yy.ast.push() "]
+  ],
+  "NESTED_PATH_COMPONENT": [
+    ["MEMBER_COMPONENT", "$$ = [ yy.ast.merge($1, { operation: \"member\" }) ]"],
+    ["SUBSCRIPT_COMPONENT", "$$ = [ yy.ast.merge($1, { operation: \"subscript\" }) ]"]
+  ],
+  "MEMBER_COMPONENT": [
+    ["CHILD_MEMBER_COMPONENT", "$$ = $1"],
+    ["DESCENDANT_MEMBER_COMPONENT", "$$ = $1"]
+  ],
+  "CHILD_MEMBER_COMPONENT": [
+    ["DOT MEMBER_EXPRESSION", "$$ = yy.ast.merge($2, { scope: \"child\" })"]
+  ],
+  "LEADING_CHILD_MEMBER_EXPRESSION": [
+    ["MEMBER_EXPRESSION", "yy.ast.set({ scope: \"child\", operation: \"member\" })"]
+  ],
+  "DESCENDANT_MEMBER_COMPONENT": [
+    ["DOT_DOT MEMBER_EXPRESSION", "$$ = yy.ast.merge($2, { scope: \"descendant\" })"]
+  ],
+  "MEMBER_EXPRESSION": [
+    ["STAR", ""],
+    ["ACTIVE_SCRIPT_EXPRESSION", "$$ = $1"],
+    ["ACTIVE_REGEXP_EXPRESSION", "$$ = $1"],
+    ["ACTIVE_FILTER_EXPRESSION", "$$ = $1"],
+    ["IDENTIFIER", "$$ = $1"],
+    ["SCRIPT_EXPRESSION", "$$ = $1"],
+    ["INTEGER", "$$ = { expression: { type: \"numeric_literal\", value: parseInt($1) } }; yy.ast.node($$)"],
+    ["END", ""]
+  ],
+  "SUBSCRIPT_COMPONENT": [
+    ["CHILD_SUBSCRIPT_COMPONENT", "$$ = $1"],
+    ["DESCENDANT_SUBSCRIPT_COMPONENT", "$$ = $1"]
+  ],
+  "DESCENDANT_SUBSCRIPT_COMPONENT": [
+    ["DOT_DOT CHILD_SUBSCRIPT_COMPONENT", "$$ = yy.ast.merge($2, { scope: \"descendant\" })"]
+  ],
+  "CHILD_SUBSCRIPT_COMPONENT": [
+    ["[ SUBSCRIPT ]", "$$ = $2.scope? $2 : yy.ast.merge($2, { scope: \"child\" })"]
+  ],
+  "SUBSCRIPT": [
+    ["SUBSCRIPT_EXPRESSION_LIST", "if ($1.length > 1) {$$ = yy.ast.node({ expression: { type: \"union\", value: $1 } });} else {$$ = yy.ast.merge($1[0], { operation: \"subscript\" })}"]
+  ],
+  "SUBSCRIPT_EXPRESSION_LIST": [
+    ["SUBSCRIPT_EXPRESSION_LISTABLE", "$$ = [ $1 ];"],
+    ["SUBSCRIPT_EXPRESSION_LIST , SUBSCRIPT_EXPRESSION_LISTABLE", "$$ = $1.concat($3);"]
+  ],
+  "SUBSCRIPT_EXPRESSION_LISTABLE": [
+    ["SUBSCRIPT_COMPONENT_EXPRESSION_LISTABLE", "$$ = $1"],
+    ["SUBSCRIPT_SIMPLE_EXPRESSION_LISTABLE", "$$ = $1"],
+    ["SUBSCRIPT_ACTIVE_EXPRESSION_LISTABLE", "$$ = $1"],
+    ["DESCENDANT_MEMBER_COMPONENT", "$$ = yy.ast.merge($1, { scope: \"descendant\" })"]
+  ],
+  "SUBSCRIPT_SIMPLE_EXPRESSION_LISTABLE": [
+    ["INTEGER", "$$ = { expression: { type: \"numeric_literal\", value: parseInt($1) } }; yy.ast.set($$)"],
+    ["STRING_LITERAL", " $$ = { expression: { type: \"string_literal\", value: $1 } }; yy.ast.set($$)"],
+    ["ReservedWord", "$$ = $1"],
+    ["IDENTIFIER", "$$ = $1"]
+  ],
+  "SUBSCRIPT_ACTIVE_EXPRESSION_LISTABLE": [
+    ["DOLLAR", "$$ = $1"],
+    ["ACTIVE_ROOT", "$$ = $1"],
+    ["STAR", "$$ = $1"],
+    ["ACTIVE_REGEXP_EXPRESSION", "$$ = $1"],
+    ["ACTIVE_SCRIPT_EXPRESSION", "$$ = $1"],
+    ["ACTIVE_FILTER_EXPRESSION", "$$ = $1"],
+    ["ACTIVE_SLICE", "$$ = { expression: { type: \"slice|active\", value: $1 } }; yy.ast.node($$)"],
+    ["ARRAY_SLICE", "$$ = { expression: { type: \"slice\", value: $1 } }; yy.ast.node($$)"],
+    ["SCRIPT_EXPRESSION", "$$ = $1"],
+    ["FILTER_EXPRESSION", "$$ = $1"]
+  ],
+  "SUBSCRIPT_COMPONENT_EXPRESSION_LISTABLE": [
+    ["SUBSCRIPT_EXPRESSION_NESTABLE", "$$ = $1"]
+  ],
+  "SUBSCRIPT_EXPRESSION_NESTABLE": [
+    ["SUBSCRIPT_SIMPLE_EXPRESSION_LISTABLE NESTED_PATH_COMPONENTS", "$$ = yy.ast.rollIntoParent($1, yy.ast.stashPop()); yy.ast.pop()"],
+    ["SUBSCRIPT_ACTIVE_EXPRESSION_LISTABLE NESTED_PATH_COMPONENTS", "$$ = yy.ast.rollIntoParent($1, yy.ast.stashPop()); yy.ast.pop()"],
+    ["DESCENDANT_MEMBER_COMPONENT NESTED_PATH_COMPONENTS", "$$ = yy.ast.rollIntoParent(yy.ast.merge($1, { operation: \"member\" }), yy.ast.stashPop()); yy.ast.pop()"],
+    ["SUBSCRIPT_COMPONENT NESTED_PATH_COMPONENTS", "$$ = yy.ast.rollIntoParent(yy.ast.active_position(), [ yy.ast.merge($1, { operation: \"subscript\" }) ].concat(yy.ast.stashPop())); yy.ast.pop()"],
+    ["CHILD_MEMBER_COMPONENT NESTED_PATH_COMPONENTS", "$$ = yy.ast.rollIntoParent(yy.ast.active_position(), [ yy.ast.merge($1, { scope: \"child\", operation: \"member\" }) ].concat(yy.ast.stashPop())); yy.ast.pop()"],
+    ["SUBSCRIPT_COMPONENT", "$$ = yy.ast.rollIntoParent(yy.ast.active_position(), [ yy.ast.merge($1, { operation: \"subscript\" }) ]); yy.ast.pop()"],
+    ["CHILD_MEMBER_COMPONENT", "$$ = yy.ast.rollIntoParent(yy.ast.active_position(), [ yy.ast.merge($1, { scope: \"child\", operation: \"member\" }) ]); yy.ast.pop()"]
+  ],
+  "NESTED_PATH_COMPONENTS": [
+    ["NESTED_PATH_COMPONENT", "yy.ast.stashPush($1); $$ = yy.ast.stashClone();"],
+    ["NESTED_PATH_COMPONENTS NESTED_PATH_COMPONENT", "yy.ast.stash($2); $$ = yy.ast.stashClone()"]
+  ],
+  "SUBSCRIPT_EXPRESSION_NESTABLE_LEADING_MEMBER_EXPRESSION": [
+    ["SUBSCRIPT_SIMPLE_EXPRESSION_LISTABLE", "$$ = $1"],
+    ["SUBSCRIPT_ACTIVE_EXPRESSION_LISTABLE", "$$ = $1"]
+  ],
+  "DOLLAR": [
+    ["DOLLAR_TOKEN", "$$ = { expression: { type: \"root\", value: \"$\" } }; yy.ast.node($$)"]
+  ],
+  "ACTIVE_ROOT": [
+    ["ACTIVE_ROOT_TOKEN", "$$ = { expression: { type: \"root|active\", value:  String.fromCharCode(0x40) + \"$\" } }; yy.ast.node($$)"]
+  ],
+  "STAR": [
+    ["STAR_TOKEN", "$$ = { expression: { type: \"wildcard\", value: $1 } }; yy.ast.node($$)"]
+  ],
+  "SCRIPT_EXPRESSION": [
+    ["SCRIPT_EXPRESSION_TOKEN", "$$ = { expression: { type: \"script_expression\", value: $1 } }; yy.ast.node($$)"]
+  ],
+  "CALL_EXPRESSION": [
+    ["CALL_EXPRESSION_TOKEN", "$$ = { expression: { type: \"call_expression\", value: yy.ast.toCallParams($1) } }; yy.ast.node($$)"]
+  ],
+  "ACTIVE_SCRIPT_EXPRESSION": [
+    ["ACTIVE_SCRIPT_EXPRESSION_TOKEN", "$$ = { expression: { type: \"script_expression|active\", value: \"(\" + $1.map.script + \")\", active: $1} }; yy.ast.node($$)"]
+  ],
+  "ACTIVE_FILTER_EXPRESSION": [
+    ["ACTIVE_FILTER_EXPRESSION_TOKEN", "$$ = { expression: { type: \"filter_expression|active\", value: \"(\" + $1.filter.script + \")\", active: $1} }; yy.ast.node($$)"]
+  ],
+  "ACTIVE_REGEXP_EXPRESSION": [
+    ["ACTIVE_REGEXP_TOKEN", "$$ = { expression: { type: \"regexp_expression|active\", value: \"(\" + $1.regexp + \")\", active: $1} }; yy.ast.node($$)"]
+  ],
+  "FILTER_EXPRESSION": [
+    ["FILTER_EXPRESSION_TOKEN", "$$ = { expression: { type: \"filter_expression\", value: $1 } }; yy.ast.node($$)"]
+  ],
+  "IDENTIFIER": [
+    ["IDENTIFIER_NAME", "$$ = { expression: { type: \"identifier\", value: $1 } }; yy.ast.node($$)"]
+  ],
+  "ReservedWord": [
+    ["TRUE_TOKEN", " $$ = { expression: { type: \"keyword\", value: true } }; yy.ast.node($$)"],
+    ["FALSE_TOKEN", " $$ = { expression: { type: \"keyword\", value: false } }; yy.ast.node($$)"],
+    ["NULL_TOKEN", " $$ = { expression: { type: \"keyword\", value: null } }; yy.ast.node($$)"],
+    ["UNDEFINED_TOKEN", " $$ = { expression: { type: \"keyword\", value: null } }; yy.ast.node($$)"]
+  ],
+  "SUBSCRIPT_EXPRESSION_NON_LISTABLE": [],
+  "SUBSCRIPT_EXPRESSION_NON_REPEATABLE": [],
+  "STRING_LITERAL": [
+    ["QQ_STRING", "$$ = yy.ast.unescapeDoubleQuotes($1)"],
+    ["Q_STRING", "$$ = yy.ast.unescapeSingleQuotes($1)"]
+  ]
+}}
