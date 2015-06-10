@@ -366,8 +366,8 @@ suite('graphql#parse-common', function() {
     ]);
   });
 
-  test('parse branches of listable ACTIVE_SLICE subscript expressions with curvey {} subscripts', function () {
-    var path = jpql.parse("node{123}{friends{{1:10},(@length-20):(@length-10),100}}");
+  test('parse branches of listable ACTIVE_SLICE subscript expressions with curvey {} subscripts, #slice taz and provider argument (#slice spec should enforce => as type for map script and recommend => as default for the reduce script)', function () {
+    var path = jpql.parse("node{123}{friends{{1:10},(#slice {@length-20}):(=>{@length-10}),100}}");
     assert.deepEqual(path, [
       {
         "expression": {
@@ -413,12 +413,22 @@ suite('graphql#parse-common', function() {
                   },
                   {
                     "expression": {
-                      "type": "slice|active",
-                      "value": [
-                        "(@length-20)",
-                        "(@length-10)",
-                        1
-                      ]
+                      "active": {
+                        "map": {
+                          "label": "slice",
+                          "script": "{@length-20}",
+                          "tag": "#",
+                          "value": "(#slice {@length-20})"
+                        },
+                        "reduce": {
+                          "provider": "=>",
+                          "script": "{@length-10}",
+                          "value": "(=>{@length-10})"
+                        },
+                        "value": "(#slice {@length-20}):(=>{@length-10})"
+                      },
+                      "type": "script_expression|active",
+                      "value": "({@length-20})"
                     }
                   },
                   {

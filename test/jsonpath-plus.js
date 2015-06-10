@@ -139,7 +139,7 @@ suite('extended-jsonpath#parse', function() {
   });
 
   test('parse slices with SCRIPT_EXPRESSION to declaritive define a slice in terms of array size :: should parse slice with subscripts as SCRIPT_EXPRESSION', function () {
-    var path = jpql.parse("genereLists[(@.length-20):(@.length-20)].name");
+    var path = jpql.parse("genereLists[({@.length-20}):({@.length-20})].name");
     assert.deepEqual(path, [
       {
         "expression": {
@@ -151,12 +151,19 @@ suite('extended-jsonpath#parse', function() {
       },
       {
         "expression": {
-          "type": "slice|active",
-          "value": [
-            "(@.length-20)",
-            "(@.length-20)",
-            1
-          ]
+          "active": {
+            "map": {
+              "script": "{@.length-20}",
+              "value": "({@.length-20})"
+            },
+            "reduce": {
+              "script": "{@.length-20}",
+              "value": "({@.length-20})"
+            },
+            "value": "({@.length-20}):({@.length-20})"
+          },
+          "type": "script_expression|active",
+          "value": "({@.length-20})"
         },
         "operation": "subscript",
         "scope": "child"
@@ -574,7 +581,7 @@ suite('extended-jsonpath#parse', function() {
   });
 
   test('parse nested subscript expression with leading active expression (active-array-slice)', function () {
-    var path = jpql.parse("genereLists[(@.length-5):(@.length-1)[name,rating]]");
+    var path = jpql.parse("genereLists[(#slice {@.length-5}):({@.length-1})[name,rating]]");
     assert.deepEqual(path, [
       {
         "expression": {
@@ -612,12 +619,21 @@ suite('extended-jsonpath#parse', function() {
           "scope": "branch"
         },
         "expression": {
-          "type": "slice|active",
-          "value": [
-            "(@.length-5)",
-            "(@.length-1)",
-            1
-          ]
+          "active": {
+            "map": {
+              "label": "slice",
+              "script": "{@.length-5}",
+              "tag": "#",
+              "value": "(#slice {@.length-5})"
+            },
+            "reduce": {
+              "script": "{@.length-1}",
+              "value": "({@.length-1})"
+            },
+            "value": "(#slice {@.length-5}):({@.length-1})"
+          },
+          "type": "script_expression|active",
+          "value": "({@.length-5})"
         },
         "operation": "subscript",
         "scope": "child"
@@ -1864,7 +1880,7 @@ test('parse list of single nested subscript component with leading nested path c
   });
 
   test('[X] all books [author,title] via list of subscript expression with first level active slice expression', function() {
-    var results = jpql.parse('$..book[(@.length-3):(@.length-2).title,(@.length-2):(@.length-1).title.price]');
+    var results = jpql.parse('$..book[(#slice {@.length-3}):({@.length-2}).title,(#slice {@.length-2}):({@.length-1}).title.price]');
     assert.deepEqual(results, [
       {
         "expression": {
@@ -1899,12 +1915,21 @@ test('parse list of single nested subscript component with leading nested path c
                 "scope": "branch"
               },
               "expression": {
-                "type": "slice|active",
-                "value": [
-                  "(@.length-3)",
-                  "(@.length-2)",
-                  1
-                ]
+                "active": {
+                  "map": {
+                    "label": "slice",
+                    "script": "{@.length-3}",
+                    "tag": "#",
+                    "value": "(#slice {@.length-3})"
+                  },
+                  "reduce": {
+                    "script": "{@.length-2}",
+                    "value": "({@.length-2})"
+                  },
+                  "value": "(#slice {@.length-3}):({@.length-2})"
+                },
+                "type": "script_expression|active",
+                "value": "({@.length-3})"
               }
             },
             {
@@ -1930,12 +1955,21 @@ test('parse list of single nested subscript component with leading nested path c
                 "scope": "branch"
               },
               "expression": {
-                "type": "slice|active",
-                "value": [
-                  "(@.length-2)",
-                  "(@.length-1)",
-                  1
-                ]
+                "active": {
+                  "map": {
+                    "label": "slice",
+                    "script": "{@.length-2}",
+                    "tag": "#",
+                    "value": "(#slice {@.length-2})"
+                  },
+                  "reduce": {
+                    "script": "{@.length-1}",
+                    "value": "({@.length-1})"
+                  },
+                  "value": "(#slice {@.length-2}):({@.length-1})"
+                },
+                "type": "script_expression|active",
+                "value": "({@.length-2})"
               }
             }
           ]

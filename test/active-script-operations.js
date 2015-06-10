@@ -2,6 +2,70 @@ var assert = require('assert');
 var jpql = new require('../')();
 var util = require('util');
 
+test('[Structure Matching] negative lookbehind filter expression, shorthand for filter expression followed by delete expression operation without key or (-{}), partial remove "-" (DELETE), implementation is free to chose to warn or err if not found', function() {
+  var results = jpql.parse('$..book[?<!{@}][invalid, deprecated, obsolete]'); //equivalent to $..book[?(!@.invalid && !@.deprecated && !@.onbsolete )]
+  assert.deepEqual(results, [
+    {
+      "expression": {
+        "type": "root",
+        "value": "$"
+      }
+    },
+    {
+      "expression": {
+        "type": "identifier",
+        "value": "book"
+      },
+      "operation": "member",
+      "scope": "descendant"
+    },
+    {
+      "expression": {
+        "active": {
+          "filter": {
+            "flag": "<!",
+            "script": "{@}",
+            "value": "?<!{@}"
+          },
+          "stream": {},
+          "value": "?<!{@}"
+        },
+        "type": "filter_expression|active",
+        "value": "({@})"
+      },
+      "operation": "subscript",
+      "scope": "child"
+    },
+    {
+      "expression": {
+        "type": "union",
+        "value": [
+          {
+            "expression": {
+              "type": "identifier",
+              "value": "invalid"
+            }
+          },
+          {
+            "expression": {
+              "type": "identifier",
+              "value": "deprecated"
+            }
+          },
+          {
+            "expression": {
+              "type": "identifier",
+              "value": "obsolete"
+            }
+          }
+        ]
+      },
+      "operation": "subscript",
+      "scope": "child"
+    }
+  ]);
+});
+
 suite('jsonpathql#active-script-operations', function() {
 
   test('active script expression operations ({}), default is GET', function() {
@@ -2140,8 +2204,8 @@ suite('jsonpathql#active-script-operations', function() {
     ]);
   })
 })
-
 suite('jsonpathql#active filter component', function() {
+
   test('async: subscribe to filtered path component updates', function() {
     var results = jpql.parse('$..book.?#tagPending{@.title===null}');
     assert.deepEqual(results, [
@@ -2516,8 +2580,8 @@ suite('jsonpathql#active filter component', function() {
     ]);
   });
 
-  test('[Structure Matching] negative lookbehind filter expression, shorthand for filter expression followed by delete expression operation without key or (-{}), partial remove "-" (DELETE), implementation is free to chose to warn or err if not found', function() {
-    var results = jpql.parse('$..book[?<!{@}][invalid, deprecated, obsolete]'); //equivalent to $..book[?(!@.invalid && !@.deprecated && !@.onbsolete )]
+  test('all books [author,title] via list of subscript expression with first active script expression that is not a slice expression unless #slice is configured as default for map/reduce execution in a degraded state', function() {
+    var results = jpql.parse('$..book[({@.length-3}):({@.length-1}).title, ({@.length-3}):({@.length-1}).price]');
     assert.deepEqual(results, [
       {
         "expression": {
@@ -2535,41 +2599,66 @@ suite('jsonpathql#active filter component', function() {
       },
       {
         "expression": {
-          "active": {
-            "filter": {
-              "flag": "<!",
-              "script": "{@}",
-              "value": "?<!{@}"
-            },
-            "stream": {},
-            "value": "?<!{@}"
-          },
-          "type": "filter_expression|active",
-          "value": "({@})"
-        },
-        "operation": "subscript",
-        "scope": "child"
-      },
-      {
-        "expression": {
           "type": "union",
           "value": [
             {
+              "branch": {
+                "path": [
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "title"
+                    },
+                    "operation": "member",
+                    "scope": "child|branch"
+                  }
+                ],
+                "scope": "branch"
+              },
               "expression": {
-                "type": "identifier",
-                "value": "invalid"
+                "active": {
+                  "map": {
+                    "script": "{@.length-3}",
+                    "value": "({@.length-3})"
+                  },
+                  "reduce": {
+                    "script": "{@.length-1}",
+                    "value": "({@.length-1})"
+                  },
+                  "value": "({@.length-3}):({@.length-1})"
+                },
+                "type": "script_expression|active",
+                "value": "({@.length-3})"
               }
             },
             {
+              "branch": {
+                "path": [
+                  {
+                    "expression": {
+                      "type": "identifier",
+                      "value": "price"
+                    },
+                    "operation": "member",
+                    "scope": "child|branch"
+                  }
+                ],
+                "scope": "branch"
+              },
               "expression": {
-                "type": "identifier",
-                "value": "deprecated"
-              }
-            },
-            {
-              "expression": {
-                "type": "identifier",
-                "value": "obsolete"
+                "active": {
+                  "map": {
+                    "script": "{@.length-3}",
+                    "value": "({@.length-3})"
+                  },
+                  "reduce": {
+                    "script": "{@.length-1}",
+                    "value": "({@.length-1})"
+                  },
+                  "value": "({@.length-3}):({@.length-1})"
+                },
+                "type": "script_expression|active",
+                "value": "({@.length-3})"
               }
             }
           ]
