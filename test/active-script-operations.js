@@ -2142,6 +2142,116 @@ suite('jsonpathql#active-script-operations', function() {
 })
 suite('jsonpathql#active filter component', function() {
 
+  test('basic active filter component', function() {
+    var results = jpql.parse('expression.active[map[provider, script, value], reduce.?{@=={}}, ({"Notification"})]');
+    assert.deepEqual(results, [
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "expression"
+        },
+        "operation": "member",
+        "scope": "child"
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "active"
+        },
+        "operation": "member",
+        "scope": "child"
+      },
+      {
+        "expression": {
+          "type": "union",
+          "value": [
+            {
+              "branch": {
+                "path": [
+                  {
+                    "expression": {
+                      "type": "union",
+                      "value": [
+                        {
+                          "expression": {
+                            "type": "identifier",
+                            "value": "provider"
+                          }
+                        },
+                        {
+                          "expression": {
+                            "type": "identifier",
+                            "value": "script"
+                          }
+                        },
+                        {
+                          "expression": {
+                            "type": "identifier",
+                            "value": "value"
+                          }
+                        }
+                      ]
+                    },
+                    "operation": "subscript",
+                    "scope": "child|branch"
+                  }
+                ],
+                "scope": "branch"
+              },
+              "expression": {
+                "type": "identifier",
+                "value": "map"
+              }
+            },
+            {
+              "branch": {
+                "path": [
+                  {
+                    "expression": {
+                      "active": {
+                        "filter": {
+                          "script": "{@=={}}",
+                          "value": "?{@=={}}"
+                        },
+                        "stream": {},
+                        "value": "?{@=={}}"
+                      },
+                      "type": "filter_expression|active",
+                      "value": "({@=={}})"
+                    },
+                    "operation": "member",
+                    "scope": "child|branch"
+                  }
+                ],
+                "scope": "branch"
+              },
+              "expression": {
+                "type": "identifier",
+                "value": "reduce"
+              }
+            },
+            {
+              "expression": {
+                "active": {
+                  "map": {
+                    "script": "{\"Notification\"}",
+                    "value": "({\"Notification\"})"
+                  },
+                  "reduce": {},
+                  "value": "({\"Notification\"})"
+                },
+                "type": "script_expression|active",
+                "value": "({\"Notification\"})"
+              }
+            }
+          ]
+        },
+        "operation": "subscript",
+        "scope": "child"
+      }
+    ]);
+  });
+
   test('async: subscribe to filtered path component updates', function() {
     var results = jpql.parse('$..book.?#tagPending{@.title===null}');
     assert.deepEqual(results, [
