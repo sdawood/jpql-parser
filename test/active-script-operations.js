@@ -1093,7 +1093,8 @@ suite('jsonpathql#active-script-operations', function() {
   });
 
  test('parse mapping script, mergeAll value or default scenario, implementation chose to bind the script this reference to the partial instead of using "@', function() {
-    var results = jpql.parse('$..book[fullName, (=>{@.fullName ? undefined : "Not Available"})]');
+//    var results = jpql.parse('$..book[fullName, (=>{@.fullName ? undefined : "Not Available"})]');
+    var results = jpql.parse('$..book.*.author[.*[(=>{@.fullName ? fullName : "Not Available"})]]');
     assert.deepEqual(results, [
       {
         "expression": {
@@ -1111,30 +1112,54 @@ suite('jsonpathql#active-script-operations', function() {
       },
       {
         "expression": {
-          "type": "union",
-          "value": [
+          "type": "wildcard",
+          "value": "*"
+        },
+        "operation": "member",
+        "scope": "child"
+      },
+      {
+        "expression": {
+          "type": "identifier",
+          "value": "author"
+        },
+        "operation": "member",
+        "scope": "child"
+      },
+      {
+        "branch": {
+          "path": [
             {
               "expression": {
-                "type": "identifier",
-                "value": "fullName"
-              }
+                "type": "wildcard",
+                "value": "*"
+              },
+              "operation": "member",
+              "scope": "child|branch"
             },
             {
               "expression": {
                 "active": {
                   "map": {
                     "provider": "=>",
-                    "script": "{@.fullName ? undefined : \"Not Available\"}",
-                    "value": "(=>{@.fullName ? undefined : \"Not Available\"})"
+                    "script": "{@.fullName ? fullName : \"Not Available\"}",
+                    "value": "(=>{@.fullName ? fullName : \"Not Available\"})"
                   },
                   "reduce": {},
-                  "value": "(=>{@.fullName ? undefined : \"Not Available\"})"
+                  "value": "(=>{@.fullName ? fullName : \"Not Available\"})"
                 },
                 "type": "script_expression|active",
-                "value": "({@.fullName ? undefined : \"Not Available\"})"
-              }
+                "value": "({@.fullName ? fullName : \"Not Available\"})"
+              },
+              "operation": "subscript",
+              "scope": "child|branch"
             }
-          ]
+          ],
+          "scope": "branch"
+        },
+        "expression": {
+          "type": "active_position",
+          "value": "{{$index}}"
         },
         "operation": "subscript",
         "scope": "child"
