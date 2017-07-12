@@ -1,5 +1,5 @@
 *To run test with jison syntax parser
-`cat jpql-grammar.l jpql-grammar.y > ../lib/jpql-grammar.wip.jison`
+`cat jpql-grammar.l jpql-grammar.y > ../src/jpql-grammar.wip.jison`
 
 *To convert progress from lex and bnf to json for comparison
 `jison2json jpql-grammar.y jpql-grammar.l > jpql-grammar2.js`
